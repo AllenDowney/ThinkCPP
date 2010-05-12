@@ -8,8 +8,7 @@
   \item algorithm, 96, 97
   \item ambiguity, 6
   \item apmatrix, 169
-  \item apstring, 74
-    \subitem length, 69
+  \item apstring
     \subitem vector of, 125
   \item argument, 23, 27, 31
   \item arithmetic
@@ -48,17 +47,17 @@
   \item character operator, 17
   \item cin, 85, 162
   \item class, 149, 150, 160
-    \subitem apstring, 74
     \subitem Card, 123
     \subitem Complex, 151
+    \subitem string, 73, 74
     \subitem Time, 29
   \item client programs, 149
   \item cmath, 23
   \item comment, 7
   \item comparable, 128
   \item comparison
-    \subitem apstring, 74
     \subitem operator, 33
+    \subitem string, 74
   \item comparison operator, 47, 128
   \item compile, 2, 9
   \item compile-time error, 4, 43
@@ -81,7 +80,7 @@
     \subitem Cartesian, 151
     \subitem polar, 151
   \item correctness, 134
-  \item counter, 72, 76, 105
+  \item counter, 71, 76, 105
   \item cout, 85, 162
   \item current object, 112
 
@@ -94,7 +93,7 @@
   \item debugging, 4, 9, 43
   \item deck, 129, 135, 140
   \item declaration, 13, 78
-  \item decrement, 72, 76, 92
+  \item decrement, 71, 76, 92
   \item default, 139
   \item detail hiding, 149
   \item deterministic, 102, 109
@@ -112,7 +111,7 @@
 
   \item efficiency, 145
   \item element, 100, 109
-  \item encapsulation, 60, 62, 65, 72, 130
+  \item encapsulation, 60, 62, 65, 71, 130
     \subitem data, 149, 157, 167
     \subitem functional, 149
   \item encode, 123, 135
@@ -163,7 +162,7 @@
 
   \indexspace
 
-  \item generalization, 60, 63, 65, 72, 96
+  \item generalization, 60, 63, 65, 71, 96
   \item getline, 163
   \item good, 162
 
@@ -179,11 +178,11 @@
   \indexspace
 
   \item ifstream, 162
-  \item immutable, 74
+  \item immutable, 73
   \item implementation, 121, 149
-  \item increment, 72, 76, 92
+  \item increment, 71, 76, 92
   \item incremental development, 43, 95
-  \item index, 70, 76, 101, 109, 130, 169
+  \item index, 69, 76, 101, 109, 130, 169
   \item infinite loop, 57, 65, 163
   \item infinite recursion, 39, 40, 134
   \item initialization, 21, 31, 47
@@ -218,7 +217,7 @@
     \subitem safe, 4
   \item leap of faith, 52, 147
   \item length
-    \subitem apstring, 69
+    \subitem string, 68
     \subitem vector, 102
   \item linear search, 131
   \item Linux, 5
@@ -234,7 +233,7 @@
     \subitem infinite, 57, 65, 163
     \subitem nested, 130, 141, 170
     \subitem search, 131
-  \item loop variable, 60, 63, 70, 101
+  \item loop variable, 60, 63, 69, 101
   \item low-level language, 2, 9
 
   \indexspace
@@ -391,8 +390,9 @@
   \item stream, 85, 161, 173
     \subitem status, 162
   \item String, 11
-  \item string
+  \item string, 73, 74
     \subitem concatentation, 166
+    \subitem length, 68
     \subitem native C, 163
   \item struct, 77, 89, 150
     \subitem as parameter, 80
@@ -439,7 +439,7 @@
   \item variable, 13, 19
     \subitem instance, 140, 151, 153
     \subitem local, 62, 65
-    \subitem loop, 60, 63, 70, 101
+    \subitem loop, 60, 63, 69, 101
     \subitem temporary, 42
   \item vector, 99, 109
     \subitem copying, 101

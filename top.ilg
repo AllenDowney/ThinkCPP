@@ -1,6 +1,6 @@
-This is makeindex, version 2.14 [02-Oct-2002] (kpathsea + Thai support).
+This is makeindex, version 2.15 [TeX Live 2009] (kpathsea + Thai support).
 Scanning input file top.idx....done (625 entries accepted, 0 rejected).
-Sorting entries........done (6299 comparisons).
+Sorting entries........done (6114 comparisons).
 Generating output file top.ind....done (457 lines written, 0 warnings).
 Output written in top.ind.
 Transcript written in top.ilg.

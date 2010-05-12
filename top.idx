@@ -245,30 +245,30 @@
 \indexentry{local variable}{65}
 \indexentry{variable!local}{65}
 \indexentry{program development}{65}
-\indexentry{apstring!length}{69}
-\indexentry{length!apstring}{69}
+\indexentry{string!length}{68}
+\indexentry{length!string}{68}
 \indexentry{traverse}{69}
-\indexentry{loop variable}{70}
-\indexentry{variable!loop}{70}
-\indexentry{index}{70}
+\indexentry{loop variable}{69}
+\indexentry{variable!loop}{69}
+\indexentry{index}{69}
 \indexentry{error!run-time}{70}
 \indexentry{run-time error}{70}
 \indexentry{find}{70}
 \indexentry{traverse!counting}{71}
 \indexentry{loop!counting}{71}
-\indexentry{counter}{72}
-\indexentry{increment}{72}
-\indexentry{decrement}{72}
-\indexentry{encapsulation}{72}
-\indexentry{generalization}{72}
+\indexentry{counter}{71}
+\indexentry{increment}{71}
+\indexentry{decrement}{71}
+\indexentry{encapsulation}{71}
+\indexentry{generalization}{71}
 \indexentry{operator!increment}{72}
 \indexentry{operator!decrement}{72}
-\indexentry{class!apstring}{74}
-\indexentry{immutable}{74}
-\indexentry{apstring}{74}
-\indexentry{class!apstring}{74}
-\indexentry{comparison!apstring}{74}
-\indexentry{apstring}{74}
+\indexentry{class!string}{73}
+\indexentry{immutable}{73}
+\indexentry{string}{73}
+\indexentry{class!string}{74}
+\indexentry{comparison!string}{74}
+\indexentry{string}{74}
 \indexentry{object}{76}
 \indexentry{index}{76}
 \indexentry{traverse}{76}

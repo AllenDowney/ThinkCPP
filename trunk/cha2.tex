@@ -1,0 +1,606 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+\chapter{Variables and types}
+
+\section{More output}
+\index{output}
+\index{statement!output}
+
+As I mentioned in the last chapter, you can put as many statements as
+you want in {\tt main}.  For example, to output more than one line:
+
+\begin{verbatim}
+#include <iostream>
+using namespace std;
+// main: generate some simple output
+
+int main ()
+{
+  cout << "Hello, world." << endl;     // output one line
+  cout << "How are you?" << endl;      // output another
+  return 0;
+}
+\end{verbatim}
+%
+As you can see, it is legal to put comments at the
+end of a line, as well as on a line by themselves.
+
+\index{String}
+\index{type!String}
+
+The phrases that appear in quotation marks are called {\bf strings},
+because they are made up of a sequence (string) of letters.  Actually,
+strings can contain any combination of letters, numbers, punctuation
+marks, and other special characters.
+
+\index{newline}
+
+Often it is useful to display the output from multiple output
+statements all on one line.  You can do this by leaving out
+the first {\tt endl}:
+
+\begin{verbatim}
+int main ()
+{
+  cout << "Goodbye, ";
+  cout << "cruel world!" << endl;
+  return 0
+}
+\end{verbatim}
+%
+In this case the output appears on a single line as
+{\tt Goodbye, cruel world!}.  Notice that there is a space
+between the word ``Goodbye,'' and the second quotation mark.
+This space appears in the output, so it affects the behavior
+of the program.
+
+Spaces that appear outside of quotation marks generally do
+not affect the behavior of the program.  For example, I
+could have written:
+
+\begin{verbatim}
+int main ()
+{
+  cout<<"Goodbye, ";
+  cout<<"cruel world!"<<endl;
+  return 0;
+}
+\end{verbatim}
+%
+This program would compile and run just as well as the original.
+The breaks at the ends of lines (newlines) do not affect
+the program's behavior either, so I could have written:
+
+\begin{verbatim}
+int main(){cout<<"Goodbye, ";cout<<"cruel world!"<<endl;return 0;}
+\end{verbatim}
+%
+That would work, too, although you have probably noticed that
+the program is getting harder and harder to read.  Newlines and
+spaces are useful for organizing your program visually, making
+it easier to read the program and locate syntax errors.
+
+\section{Values}
+\index{value}
+\index{type}
+
+A value is one of the fundamental things---like a letter or
+a number---that a program manipulates.  The only values we have
+manipulated so far are the string values we have been outputting, like
+{\tt "Hello, world."}.  You (and the compiler) can identify
+string values because they are enclosed in quotation marks.
+
+There are other kinds of values, including integers and characters.
+An integer is a whole number like 1 or 17.  You can output
+integer values the same way you output strings:
+
+\begin{verbatim}
+  cout << 17 << endl;
+\end{verbatim}
+%
+A character value is a letter or digit or punctuation mark
+enclosed in single quotes, like {\tt 'a'} or {\tt '5'}.
+You can output character values the same way:
+
+\begin{verbatim}
+  cout << '}' << endl;
+\end{verbatim}
+%
+This example outputs a single close squiggly-brace on a line
+by itself.
+
+It is easy to confuse different types of values, like {\tt "5"}, {\tt
+'5'} and {\tt 5}, but if you pay attention to the punctuation, it
+should be clear that the first is a string, the second is a character
+and the third is an integer.  The reason this distinction is important
+should become clear soon.
+
+\section {Variables}
+\index{variable}
+\index{value}
+
+One of the most powerful features of a programming language is the
+ability to manipulate {\bf variables}.  A variable is a named location
+that stores a value.  
+
+Just as there are different types of values (integer, character,
+etc.), there are different types of variables.  When you create a new
+variable, you have to declare what type it is.  For example, the
+character type in C++ is called {\tt char}.  The following statement
+creates a new variable named {\tt fred} that has type {\tt char}.
+
+\begin{verbatim}
+    char fred;
+\end{verbatim}
+%
+This kind of statement is called a {\bf declaration}.
+
+The type of a variable determines what kind of values it can
+store.  A {\tt char} variable can contain characters, and it should
+come as no surprise that {\tt int} variables can store integers.
+
+There are several types in C++ that can store string values, but we
+are going to skip that for now (see Chapter~\ref{strings}).
+
+\index{declaration}
+\index{statement!declaration}
+
+To create an integer variable, the syntax is 
+
+\begin{verbatim}
+  int bob;
+\end{verbatim}
+%
+where {\tt bob} is the arbitrary name you made up for the
+variable.  In general, you will want to make up variable names
+that indicate what you plan to do with the variable.  For
+example, if you saw these variable declarations:
+
+\begin{verbatim}
+    char firstLetter;
+    char lastLetter;
+    int hour, minute;
+\end{verbatim}
+%
+you could probably make a good guess at what values
+would be stored in them.  This example
+also demonstrates the syntax for declaring multiple variables
+with the same type: {\tt hour} and {\tt minute}
+are both integers ({\tt int} type).
+
+\section{Assignment}
+\index{assignment}
+\index{statement!assignment}
+
+Now that we have created some variables, we would like to
+store values in them.  We do that with an {\bf assignment
+statement}.
+
+\begin{verbatim}
+    firstLetter = 'a';   // give firstLetter the value 'a'
+    hour = 11;           // assign the value 11 to hour
+    minute = 59;         // set minute to 59
+\end{verbatim}
+%
+This example shows three assignments, and the comments show
+three different ways people sometimes talk about assignment
+statements.  The vocabulary can be confusing here, but the
+idea is straightforward:
+
+\begin{itemize}
+
+\item When you declare a variable, you create a named storage location.
+
+\item When you make an assignment to a variable, you give it a value.
+
+\end{itemize}
+
+A common way to represent variables on paper is to draw a box
+with the name of the variable on the outside and the value
+of the variable on the inside.  This kind of figure is called
+a {\bf state diagram} because is shows what state each of the
+variables is in (you can think of it as the variable's ``state of
+mind'').
+This diagram shows
+the effect of the three assignment statements:
+
+\vspace{0.1in}
+\centerline{\epsfig{figure=assign.eps}}
+\vspace{0.1in}
+
+I sometimes use different shapes to indicate different
+variable types.  These shapes should help remind you that one of the
+rules in C++ is that a variable has to have the same type as the
+value you assign it.  For example, you cannot store a string in
+an {\tt int} variable.  The following statement generates a compiler
+error.
+
+\begin{verbatim}
+  int hour;
+  hour = "Hello.";       // WRONG !!
+\end{verbatim}
+%
+This rule is sometimes a source of confusion, because there are many
+ways that you can convert values from one type to another, and C++
+sometimes converts things automatically.  But for now you should
+remember that as a general rule variables and values have the same
+type, and we'll talk about special cases later.
+
+Another source of confusion is that some strings {\em look}
+like integers, but they are not.  For example,
+the string {\tt "123"}, which is made up of the
+characters {\tt 1}, {\tt 2} and {\tt 3}, is not
+the same thing as the {\em number} {\tt 123}.
+This assignment is illegal:
+
+\begin{verbatim}
+  minute = "59";         // WRONG!
+\end{verbatim}
+%
+\section{Outputting variables}
+\label{output}
+
+You can output the value of a variable using the same commands
+we used to output simple values.
+
+\begin{verbatim}
+  int hour, minute;
+  char colon;
+
+  hour = 11;
+  minute = 59;
+  colon = ':';
+
+  cout << "The current time is ";
+  cout << hour;
+  cout << colon;
+  cout << minute;
+  cout << endl;
+\end{verbatim}
+%
+This program creates two integer variables named {\tt hour} and {\tt
+minute}, and a character variable named {\tt colon}.  It assigns
+appropriate values to each of the variables and then uses a series
+of output statements to generate the following:
+
+\begin{verbatim}
+The current time is 11:59
+\end{verbatim}
+
+When we talk about ``outputting a variable,'' we mean outputting the
+{\em value} of the variable.  To output the {\em name} of a variable,
+you have to put it in quotes.  For example: {\tt cout << "hour";}
+
+As we have seen before, you can include more than one value in
+a single output statement, which can make the previous program more
+concise:
+
+\begin{verbatim}
+  int hour, minute;
+  char colon;
+
+  hour = 11;
+  minute = 59;
+  colon = ':';
+
+  cout << "The current time is " << hour << colon << minute << endl;
+\end{verbatim}
+%
+On one line, this program outputs a string, two integers, a character,
+and the special value {\tt endl}.  Very impressive!
+
+\section{Keywords}
+\index{keyword}
+
+A few sections ago, I said that you can make up any name you
+want for your variables, but that's not quite true.  There
+are certain words that are reserved in C++ because they are
+used by the compiler to parse the structure of your program,
+and if you use them as variable names, it will get confused.
+These words, called {\bf keywords}, include {\tt int},
+{\tt char}, {\tt void}, {\tt endl} and many more.
+
+The complete list of keywords is included in the C++ Standard, which
+is the official language definition adopted by the the International
+Organization for Standardization (ISO) on September 1, 1998.  You
+can download a copy electronically from
+
+\begin{verbatim}
+    http://www.ansi.org/
+\end{verbatim}
+%
+Rather than memorize the list, I would suggest that you
+take advantage of a feature provided in many development
+environments: code highlighting.  As you type, different
+parts of your program should appear in different colors.  For
+example, keywords might be blue, strings red, and other code
+black.  If you type a variable name and it turns blue, watch
+out!  You might get some strange behavior from the compiler.
+
+\section{Operators}
+\index{operator}
+
+{\bf Operators} are special symbols that are used to represent
+simple computations like addition and multiplication.  Most
+of the operators in C++ do exactly what you would expect them
+to do, because they are common mathematical symbols.  For
+example, the operator for adding two integers is {\tt +}.
+
+The following are all legal C++ expressions whose meaning is
+more or less obvious:
+
+\begin{verbatim}
+1+1        hour-1       hour*60 + minute     minute/60
+\end{verbatim}
+%
+Expressions can contain both variables
+names and integer values.  In each case the name of the variable is
+replaced with its value before the computation is performed.
+
+\index{expression}
+
+Addition, subtraction and multiplication all do what you
+expect, but you might be surprised by division.  For example,
+the following program:
+
+\begin{verbatim}
+  int hour, minute;
+  hour = 11;
+  minute = 59;
+  cout << "Number of minutes since midnight: ";
+  cout << hour*60 + minute << endl;
+  cout << "Fraction of the hour that has passed: ";
+  cout << minute/60 << endl;
+\end{verbatim}
+%
+would generate the following output:
+
+\begin{verbatim}
+Number of minutes since midnight: 719
+Fraction of the hour that has passed: 0
+\end{verbatim}
+%
+The first line is what we expected, but the second line is
+odd.  The value of the variable {\tt minute} is 59, and
+59 divided by 60 is 0.98333, not 0.  The reason for the
+discrepancy is that C++ is performing {\bf integer division}.
+
+\index{type!int}
+\index{integer division}
+\index{arithmetic!integer}
+\index{division!integer}
+\index{operand}
+
+When both of the {\bf operands} are integers (operands are the things
+operators operate on), the result must also be an integer,
+and by definition integer division always rounds {\em down},
+even in cases like this where the next integer is so close.
+
+A possible alternative in this case is to calculate a percentage
+rather than a fraction:
+
+\begin{verbatim}
+  cout << "Percentage of the hour that has passed: ";
+  cout << minute*100/60 << endl;
+\end{verbatim}
+%
+The result is:
+
+\begin{verbatim}
+Percentage of the hour that has passed: 98
+\end{verbatim}
+%
+Again the result is rounded down, but at least now the answer
+is approximately correct.  In order to get an even more accurate
+answer, we could use a different type of variable, called
+floating-point, that is capable of storing fractional values.
+We'll get to that in the next chapter.
+
+\section{Order of operations}
+\index{precedence}
+\index{order of operations}
+
+When more than one operator appears in an expression the order
+of evaluation depends on the rules of {\bf precedence}.  A
+complete explanation of precedence can get complicated, but
+just to get you started:
+
+\begin{itemize}
+
+\item Multiplication and division happen before
+addition and subtraction.  So {\tt 2*3-1} yields 5, not 4, and {\tt
+2/3-1} yields -1, not 1 (remember that in integer division {\tt 2/3}
+is 0).
+
+\item If the operators have the same precedence they are evaluated
+from left to right.  So in the expression {\tt minute*100/60},
+the multiplication happens first, yielding {\tt 5900/60}, which
+in turn yields {\tt 98}.  If the operations had gone from right
+to left, the result would be {\tt 59*1} which is {\tt 59}, which
+is wrong.
+
+\item Any time you want to override the rules of precedence (or
+you are not sure what they are) you can use parentheses.  Expressions
+in parentheses are evaluated first, so {\tt 2 * (3-1)} is 4.
+You can also use parentheses to make an expression easier to
+read, as in {\tt (minute * 100) / 60}, even though it doesn't
+change the result.
+
+\end{itemize}
+
+\section{Operators for characters}
+\index{character operator}
+\index{operator!character}
+
+Interestingly, the same mathematical operations that work on
+integers also work on characters.  For example,
+
+\begin{verbatim}
+  char letter;
+  letter = 'a' + 1;
+  cout << letter << endl;
+\end{verbatim}
+%
+outputs the letter {\tt b}.  Although it is syntactically legal
+to multiply characters, it is almost never useful to do it.
+
+Earlier I said that you can only assign integer values to
+integer variables and character values to character variables,
+but that is not completely true.  In some cases, C++ converts
+automatically between types.  For example, the following is
+legal.
+
+\begin{verbatim}
+  int number;
+  number = 'a';
+  cout << number << endl;
+\end{verbatim}
+%
+The result is 97, which is the number that is used internally
+by C++ to represent the letter {\tt 'a'}.  However, it is
+generally a good idea to treat characters as characters, and
+integers as integers, and only convert from one to the other
+if there is a good reason.
+
+Automatic type conversion is an example of a common problem in designing a
+programming language, which is that there is a conflict between {\bf
+formalism}, which is the requirement that formal languages should have
+simple rules with few exceptions, and {\bf convenience}, which is the
+requirement that programming languages be easy to use in practice.
+
+More often than not, convenience wins, which is usually good for
+expert programmers, who are spared from rigorous but unwieldy
+formalism, but bad for beginning programmers, who are often baffled
+by the complexity of the rules and the number of exceptions.  In this
+book I have tried to simplify things by emphasizing the rules and
+omitting many of the exceptions.
+
+
+\section{Composition}
+\index{composition}
+\index{expression}
+
+So far we have looked at the elements of a programming
+language---variables, expressions, and statements---in
+isolation, without talking about how to combine them.
+
+One of the most useful features of programming languages
+is their ability to take small building blocks and
+{\bf compose} them.  For example, we know how to multiply
+integers and we know how to output values; it turns out we can
+do both at the same time:
+
+\begin{verbatim}
+    cout << 17 * 3;
+\end{verbatim}
+%
+Actually, I shouldn't say ``at the same time,'' since in reality
+the multiplication has to happen before the output, but
+the point is that any expression, involving numbers, characters,
+and variables, can be used inside an output statement.  We've
+already seen one example:
+
+\begin{verbatim}
+  cout << hour*60 + minute << endl;
+\end{verbatim}
+%
+You can also put arbitrary expressions on the right-hand
+side of an assignment statement:
+
+\begin{verbatim}
+  int percentage;
+  percentage = (minute * 100) / 60;
+\end{verbatim}
+%
+This ability may not seem so impressive now, but we will see
+other examples where composition makes it possible
+to express complex computations neatly and concisely.
+
+WARNING: There are limits on where you can use certain
+expressions; most notably, the left-hand side of an assignment
+statement has to be a {\em variable} name, not an expression.
+That's because the left side indicates the storage location
+where the result will go.  Expressions
+do not represent storage locations, only values.  So the
+following is illegal:  {\tt minute+1 = hour;}.
+
+\section{Glossary}
+
+\begin{description}
+
+\item[variable:] A named storage location for values.  All
+variables have a type, which determines which values it can
+store.
+
+\item[value:] A letter, or number, or other thing that can be
+stored in a variable.  
+
+\item[type:] A set of values.  The types
+we have seen are integers ({\tt int} in C++) and characters ({\tt
+char} in C++).
+
+\item[keyword:]  A reserved word that is used by the compiler
+to parse programs.  Examples we have seen include {\tt int},
+{\tt void} and {\tt endl}.
+
+\item[statement:] A line of code that represents a command or
+action.  So far, the statements we have seen are declarations,
+assignments, and output statements.
+
+\item[declaration:] A statement that creates a new variable and
+determines its type.
+
+\item[assignment:] A statement that assigns a value to a variable.
+
+\item[expression:] A combination of variables, operators and
+values that represents a single result value.  Expressions also
+have types, as determined by their operators and operands.
+
+\item[operator:] A special symbol that represents a simple
+computation like addition or multiplication.
+
+\item[operand:] One of the values on which an operator operates. 
+
+\item[precedence:] The order in which operations are evaluated.
+
+\item[composition:] The ability to combine simple
+expressions and statements into compound statements and expressions
+in order to represent complex computations concisely.
+
+\index{variable}
+\index{value}
+\index{type}
+\index{keyword}
+\index{statement}
+\index{assignment}
+\index{expression}
+\index{operator}
+\index{operand}
+\index{composition}
+
+\end{description}
+
+

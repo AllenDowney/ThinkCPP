@@ -1,0 +1,166 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+\chapter{Quick reference for AP classes}
+
+These class definitions are copied from the College Board
+web page,
+
+\begin{verbatim}
+http://www.collegeboard.org/ap/computer-science/html/quick_ref.htm
+\end{verbatim}
+
+with minor formatting changes.  This is probably a good time to
+repeat the following text, also from the College Board web page.
+
+\begin{quotation}
+"Inclusion of the C++ classes defined for use in the Advanced
+Placement Computer Science courses does not constitute endorsement of
+the other material in this textbook by the College Board, Educational
+Testing service, or the AP Computer Science Development Committee. The
+versions of the C++ classes defined for use in the AP Computer Science
+courses included in this textbook were accurate as of 20 July
+1999.  Revisions to the classes may have been made since that time."
+\end{quotation}
+
+\section{{\tt apstring}}
+
+\begin{verbatim}
+extern const int npos;  // used to indicate not a position in the string
+
+// public member functions
+
+  // constructors/destructor
+  apstring();                       // construct empty string ""
+  apstring(const char * s);         // construct from string literal
+  apstring(const apstring & str);   // copy constructor
+  ~apstring();                      // destructor
+
+  // assignment
+  const apstring & operator= (const apstring & str); // assign str
+  const apstring & operator= (const char * s);       // assign s
+  const apstring & operator= (char ch);              // assign ch
+
+  // accessors
+  int length() const;                      // number of chars
+  int find(const apstring & str) const;    // index of first occurrence of str
+  int find(char ch) const;                 // index of first occurrence of ch
+  apstring substr(int pos, int len) const; // substring of len chars, 
+                                           // starting at pos
+  const char * c_str() const;              // explicit conversion to char *
+
+  // indexing
+  char operator[ ](int k) const; // range-checked indexing
+  char & operator[ ](int k);     // range-checked indexing
+
+  // modifiers
+  const apstring & operator+= (const apstring & str); // append str
+  const apstring & operator+= (char ch);              // append char
+
+  // The following free (non-member) functions operate on strings
+
+  // I/O functions
+  ostream & operator<< ( ostream & os, const apstring & str );
+  istream & operator>> ( istream & is, apstring & str );
+  istream & getline( istream & is, apstring & str );
+
+  // comparison operators
+  bool operator== ( const apstring & lhs, const apstring & rhs );
+  bool operator!= ( const apstring & lhs, const apstring & rhs );
+  bool operator<  ( const apstring & lhs, const apstring & rhs );
+  bool operator<= ( const apstring & lhs, const apstring & rhs );
+  bool operator>  ( const apstring & lhs, const apstring & rhs );
+  bool operator>= ( const apstring & lhs, const apstring & rhs );
+
+  // concatenation operator +
+  apstring operator+ ( const apstring & lhs, const apstring & rhs );
+  apstring operator+ ( char ch, const apstring & str );
+  apstring operator+ ( const apstring & str, char ch );
+\end{verbatim}
+
+\section{{\tt apvector}}
+
+\begin{verbatim}
+template <class itemType>
+class apvector
+
+// public member functions
+
+  // constructors/destructor
+  apvector();                                 // default constructor (size==0)
+  apvector(int size);                         // initial size of vector is size
+  apvector(int size, const itemType & fillValue);  // all entries == fillValue
+  apvector(const apvector & vec);             // copy constructor
+  ~apvector();                                // destructor
+
+  // assignment
+  const apvector & operator= (const apvector & vec);
+
+  // accessors
+  int length() const;                            // capacity of vector
+
+  // indexing
+  // indexing with range checking
+  itemType & operator[ ](int index);           
+  const itemType & operator[ ](int index) const;
+
+  // modifiers
+  void resize(int newSize);               // change size dynamically
+                                          //can result in losing values
+\end{verbatim}
+
+\section{{\tt apmatrix}}
+
+\begin{verbatim}
+template <class itemType>
+class apmatrix
+
+// public member functions
+
+  // constructors/destructor
+  apmatrix();                                   // default size is 0 x 0
+  apmatrix(int rows, int cols);                 // size is rows x cols
+  apmatrix(int rows, int cols, const itemType & fillValue);
+                                                // all entries == fillValue
+  apmatrix(const apmatrix & mat);               // copy constructor
+  ~apmatrix( );                                 // destructor
+
+  // assignment
+  const apmatrix & operator = (const apmatrix & rhs);
+
+  // accessors
+  int numrows() const;                                  // number of rows
+  int numcols() const;                                  // number of columns
+
+  // indexing
+  // range-checked indexing
+  const apvector<itemType> & operator[ ](int k) const;  
+  apvector<itemType> & operator[ ](int k);
+
+  // modifiers
+  void resize(int newRows, int newCols); // resizes matrix to newRows x newCols
+                                         // (can result in losing values)
+\end{verbatim}
+

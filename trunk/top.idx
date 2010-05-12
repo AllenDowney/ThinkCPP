@@ -1,0 +1,625 @@
+\indexentry{programming language}{1}
+\indexentry{language!programming}{1}
+\indexentry{portability}{2}
+\indexentry{high-level language}{2}
+\indexentry{low-level language}{2}
+\indexentry{language!high-level}{2}
+\indexentry{language!low-level}{2}
+\indexentry{compile}{2}
+\indexentry{interpret}{2}
+\indexentry{statement}{3}
+\indexentry{debugging}{4}
+\indexentry{bug}{4}
+\indexentry{compile-time error}{4}
+\indexentry{error!compile-time}{4}
+\indexentry{syntax}{4}
+\indexentry{run-time error}{4}
+\indexentry{error!run-time}{4}
+\indexentry{safe language}{4}
+\indexentry{language!safe}{4}
+\indexentry{semantics}{4}
+\indexentry{logic error}{4}
+\indexentry{error!logic}{4}
+\indexentry{Holmes, Sherlock}{5}
+\indexentry{Doyle, Arthur Conan}{5}
+\indexentry{Linux}{5}
+\indexentry{formal language}{5}
+\indexentry{natural language}{5}
+\indexentry{language!formal}{5}
+\indexentry{language!natural}{5}
+\indexentry{parse}{6}
+\indexentry{ambiguity}{6}
+\indexentry{redundancy}{6}
+\indexentry{literalness}{6}
+\indexentry{poetry}{6}
+\indexentry{prose}{6}
+\indexentry{hello world}{7}
+\indexentry{comment}{7}
+\indexentry{statement!comment}{7}
+\indexentry{output}{7}
+\indexentry{statement!output}{7}
+\indexentry{operator}{7}
+\indexentry{problem-solving}{9}
+\indexentry{high-level language}{9}
+\indexentry{low-level language}{9}
+\indexentry{formal language}{9}
+\indexentry{natural language}{9}
+\indexentry{interpret}{9}
+\indexentry{compile}{9}
+\indexentry{syntax}{9}
+\indexentry{semantics}{9}
+\indexentry{parse}{9}
+\indexentry{error}{9}
+\indexentry{debugging}{9}
+\indexentry{output}{11}
+\indexentry{statement!output}{11}
+\indexentry{String}{11}
+\indexentry{type!String}{11}
+\indexentry{newline}{11}
+\indexentry{value}{12}
+\indexentry{type}{12}
+\indexentry{variable}{13}
+\indexentry{value}{13}
+\indexentry{declaration}{13}
+\indexentry{statement!declaration}{13}
+\indexentry{assignment}{13}
+\indexentry{statement!assignment}{13}
+\indexentry{keyword}{15}
+\indexentry{operator}{16}
+\indexentry{expression}{16}
+\indexentry{type!int}{16}
+\indexentry{integer division}{16}
+\indexentry{arithmetic!integer}{16}
+\indexentry{division!integer}{16}
+\indexentry{operand}{16}
+\indexentry{precedence}{17}
+\indexentry{order of operations}{17}
+\indexentry{character operator}{17}
+\indexentry{operator!character}{17}
+\indexentry{composition}{18}
+\indexentry{expression}{18}
+\indexentry{variable}{19}
+\indexentry{value}{19}
+\indexentry{type}{19}
+\indexentry{keyword}{19}
+\indexentry{statement}{19}
+\indexentry{assignment}{19}
+\indexentry{expression}{19}
+\indexentry{operator}{19}
+\indexentry{operand}{19}
+\indexentry{composition}{19}
+\indexentry{floating-point number}{21}
+\indexentry{type!double}{21}
+\indexentry{double (floating-point)}{21}
+\indexentry{initialization}{21}
+\indexentry{arithmetic!floating-point}{22}
+\indexentry{rounding}{22}
+\indexentry{typecasting}{22}
+\indexentry{Math function}{23}
+\indexentry{function!Math}{23}
+\indexentry{expression}{23}
+\indexentry{argument}{23}
+\indexentry{header file}{23}
+\indexentry{cmath}{23}
+\indexentry{iostream}{23}
+\indexentry{composition}{24}
+\indexentry{expression}{24}
+\indexentry{function!definition}{24}
+\indexentry{main}{24}
+\indexentry{function!main}{24}
+\indexentry{parameter}{27}
+\indexentry{argument}{27}
+\indexentry{parameter!multiple}{29}
+\indexentry{function!multiple parameter}{29}
+\indexentry{class!Time}{29}
+\indexentry{fruitful function}{30}
+\indexentry{function!fruitful}{30}
+\indexentry{floating-point}{31}
+\indexentry{function}{31}
+\indexentry{parameter}{31}
+\indexentry{argument}{31}
+\indexentry{call}{31}
+\indexentry{initialization}{31}
+\indexentry{modulus}{33}
+\indexentry{operator!modulus}{33}
+\indexentry{conditional}{33}
+\indexentry{statement!conditional}{33}
+\indexentry{operator!comparison}{33}
+\indexentry{comparison!operator}{33}
+\indexentry{conditional!alternative}{34}
+\indexentry{conditional!chained}{35}
+\indexentry{conditional!nested}{35}
+\indexentry{nested structure}{36}
+\indexentry{return}{36}
+\indexentry{statement!return}{36}
+\indexentry{recursion}{36}
+\indexentry{recursive}{38}
+\indexentry{newline}{38}
+\indexentry{recursion!infinite}{39}
+\indexentry{infinite recursion}{39}
+\indexentry{run-time error}{39}
+\indexentry{stack}{39}
+\indexentry{diagram!state}{39}
+\indexentry{diagram!stack}{39}
+\indexentry{modulus}{40}
+\indexentry{conditional}{40}
+\indexentry{conditional!chained}{40}
+\indexentry{conditional!nested}{40}
+\indexentry{recursion}{40}
+\indexentry{recursion!infinite}{40}
+\indexentry{infinite recursion}{40}
+\indexentry{return}{41}
+\indexentry{statement!return}{41}
+\indexentry{function!fruitful}{41}
+\indexentry{fruitful function}{41}
+\indexentry{return value}{41}
+\indexentry{void}{41}
+\indexentry{function!void}{41}
+\indexentry{math function!exp}{41}
+\indexentry{math function!sin}{41}
+\indexentry{math function!acos}{41}
+\indexentry{pi}{41}
+\indexentry{temporary variable}{42}
+\indexentry{variable!temporary}{42}
+\indexentry{dead code}{42}
+\indexentry{absolute value}{43}
+\indexentry{error!compile-time}{43}
+\indexentry{compile-time error}{43}
+\indexentry{compile-time error}{43}
+\indexentry{error!compile-time}{43}
+\indexentry{debugging}{43}
+\indexentry{math function!fabs}{43}
+\indexentry{program development}{43}
+\indexentry{incremental development}{43}
+\indexentry{program development}{43}
+\indexentry{scaffolding}{44}
+\indexentry{composition}{45}
+\indexentry{overloading}{46}
+\indexentry{boolean}{47}
+\indexentry{value!boolean}{47}
+\indexentry{operator!comparison}{47}
+\indexentry{comparison operator}{47}
+\indexentry{type!{\tt bool}}{47}
+\indexentry{initialization}{47}
+\indexentry{statement!initialization}{47}
+\indexentry{flag}{48}
+\indexentry{logical operator}{48}
+\indexentry{operator!logical}{48}
+\indexentry{semantics}{48}
+\indexentry{nested structure}{48}
+\indexentry{bool}{48}
+\indexentry{function!bool}{48}
+\indexentry{recursion}{50}
+\indexentry{language!complete}{50}
+\indexentry{Turing, Alan}{50}
+\indexentry{frabjuous}{50}
+\indexentry{stack}{52}
+\indexentry{diagram!state}{52}
+\indexentry{diagram!stack}{52}
+\indexentry{leap of faith}{52}
+\indexentry{factorial}{53}
+\indexentry{return type}{54}
+\indexentry{return value}{54}
+\indexentry{dead code}{54}
+\indexentry{scaffolding}{54}
+\indexentry{void}{54}
+\indexentry{overloading}{54}
+\indexentry{bool}{54}
+\indexentry{operator!conditional}{54}
+\indexentry{operator!logical}{54}
+\indexentry{assignment}{55}
+\indexentry{statement!assignment}{55}
+\indexentry{multiple assignment}{55}
+\indexentry{iteration}{56}
+\indexentry{statement!while}{56}
+\indexentry{while statement}{56}
+\indexentry{loop}{57}
+\indexentry{loop!body}{57}
+\indexentry{loop!infinite}{57}
+\indexentry{body!loop}{57}
+\indexentry{infinite loop}{57}
+\indexentry{table}{58}
+\indexentry{logarithm}{58}
+\indexentry{division!floating-point}{58}
+\indexentry{table!two-dimensional}{60}
+\indexentry{loop variable}{60}
+\indexentry{variable!loop}{60}
+\indexentry{encapsulation}{60}
+\indexentry{generalization}{60}
+\indexentry{function}{61}
+\indexentry{encapsulation}{62}
+\indexentry{program development!encapsulation}{62}
+\indexentry{local variable}{62}
+\indexentry{variable!local}{62}
+\indexentry{loop variable}{63}
+\indexentry{variable!loop}{63}
+\indexentry{generalization}{63}
+\indexentry{loop}{65}
+\indexentry{infinite loop}{65}
+\indexentry{body}{65}
+\indexentry{tab}{65}
+\indexentry{loop!infinite}{65}
+\indexentry{iteration}{65}
+\indexentry{encapsulation}{65}
+\indexentry{generalization}{65}
+\indexentry{local variable}{65}
+\indexentry{variable!local}{65}
+\indexentry{program development}{65}
+\indexentry{apstring!length}{69}
+\indexentry{length!apstring}{69}
+\indexentry{traverse}{69}
+\indexentry{loop variable}{70}
+\indexentry{variable!loop}{70}
+\indexentry{index}{70}
+\indexentry{error!run-time}{70}
+\indexentry{run-time error}{70}
+\indexentry{find}{70}
+\indexentry{traverse!counting}{71}
+\indexentry{loop!counting}{71}
+\indexentry{counter}{72}
+\indexentry{increment}{72}
+\indexentry{decrement}{72}
+\indexentry{encapsulation}{72}
+\indexentry{generalization}{72}
+\indexentry{operator!increment}{72}
+\indexentry{operator!decrement}{72}
+\indexentry{class!apstring}{74}
+\indexentry{immutable}{74}
+\indexentry{apstring}{74}
+\indexentry{class!apstring}{74}
+\indexentry{comparison!apstring}{74}
+\indexentry{apstring}{74}
+\indexentry{object}{76}
+\indexentry{index}{76}
+\indexentry{traverse}{76}
+\indexentry{counter}{76}
+\indexentry{increment}{76}
+\indexentry{decrement}{76}
+\indexentry{concatenate}{76}
+\indexentry{struct}{77}
+\indexentry{Point}{77}
+\indexentry{struct!Point}{77}
+\indexentry{declaration}{78}
+\indexentry{statement!declaration}{78}
+\indexentry{reference}{78}
+\indexentry{state diagram}{78}
+\indexentry{state}{78}
+\indexentry{struct!instance variable}{78}
+\indexentry{struct!operations}{79}
+\indexentry{parameter}{80}
+\indexentry{struct!as parameter}{80}
+\indexentry{parameter passing}{80}
+\indexentry{call by value}{80}
+\indexentry{parameter passing}{81}
+\indexentry{call by reference}{81}
+\indexentry{reference}{81}
+\indexentry{Rectangle}{82}
+\indexentry{struct!Rectangle}{82}
+\indexentry{composition}{83}
+\indexentry{nested structure}{83}
+\indexentry{struct!as return type}{84}
+\indexentry{return}{84}
+\indexentry{statement!return}{84}
+\indexentry{parameter passing}{84}
+\indexentry{call by reference}{84}
+\indexentry{reference}{84}
+\indexentry{input!keyboard}{85}
+\indexentry{stream}{85}
+\indexentry{cin}{85}
+\indexentry{cout}{85}
+\indexentry{operator!{\tt >>}}{85}
+\indexentry{structure}{87}
+\indexentry{instance variable}{87}
+\indexentry{reference}{87}
+\indexentry{pass by value}{87}
+\indexentry{pass by reference}{87}
+\indexentry{struct}{89}
+\indexentry{struct!Time}{89}
+\indexentry{Time}{89}
+\indexentry{output}{90}
+\indexentry{statement!output}{90}
+\indexentry{object!output}{90}
+\indexentry{object}{90}
+\indexentry{function!for objects}{90}
+\indexentry{void}{91}
+\indexentry{pure function}{91}
+\indexentry{function}{91}
+\indexentry{function!pure function}{91}
+\indexentry{increment}{92}
+\indexentry{decrement}{92}
+\indexentry{operator!increment}{92}
+\indexentry{operator!decrement}{92}
+\indexentry{run-time error}{93}
+\indexentry{error!run-time}{93}
+\indexentry{modifier}{93}
+\indexentry{function!modifier}{93}
+\indexentry{fill-in function}{94}
+\indexentry{function!fill-in}{94}
+\indexentry{programming style}{95}
+\indexentry{incremental development}{95}
+\indexentry{prototyping}{95}
+\indexentry{program development!incremental}{95}
+\indexentry{program development!planning}{95}
+\indexentry{arithmetic!base 60}{95}
+\indexentry{arithmetic!floating-point}{95}
+\indexentry{generalization}{96}
+\indexentry{algorithm}{96}
+\indexentry{instance}{97}
+\indexentry{instance variable}{97}
+\indexentry{pure function}{97}
+\indexentry{functional programming}{97}
+\indexentry{modifier}{97}
+\indexentry{algorithm}{97}
+\indexentry{vector}{99}
+\indexentry{type!vector}{99}
+\indexentry{constructor}{99}
+\indexentry{element}{100}
+\indexentry{vector!element}{100}
+\indexentry{run-time error}{101}
+\indexentry{index}{101}
+\indexentry{expression}{101}
+\indexentry{loop}{101}
+\indexentry{loop variable}{101}
+\indexentry{variable!loop}{101}
+\indexentry{vector!copying}{101}
+\indexentry{loop!for}{101}
+\indexentry{for}{101}
+\indexentry{statement!for}{101}
+\indexentry{length!vector}{102}
+\indexentry{vector!length}{102}
+\indexentry{random number}{102}
+\indexentry{deterministic}{102}
+\indexentry{nondeterministic}{102}
+\indexentry{statistics}{104}
+\indexentry{distribution}{104}
+\indexentry{mean}{104}
+\indexentry{traverse!counting}{105}
+\indexentry{loop!counting}{105}
+\indexentry{counter}{105}
+\indexentry{bottom-up design}{105}
+\indexentry{program development!bottom-up}{105}
+\indexentry{pattern!counter}{105}
+\indexentry{histogram}{107}
+\indexentry{histogram}{107}
+\indexentry{seed}{108}
+\indexentry{random}{108}
+\indexentry{vector}{109}
+\indexentry{element}{109}
+\indexentry{index}{109}
+\indexentry{constructor}{109}
+\indexentry{deterministic}{109}
+\indexentry{pseudorandom}{109}
+\indexentry{seed}{109}
+\indexentry{histogram}{109}
+\indexentry{member function}{111}
+\indexentry{function!member}{111}
+\indexentry{nonmember function}{112}
+\indexentry{function!nonmember}{112}
+\indexentry{current object}{112}
+\indexentry{object!current}{112}
+\indexentry{pointer}{112}
+\indexentry{this}{112}
+\indexentry{member function}{121}
+\indexentry{nonmember function}{121}
+\indexentry{function!member}{121}
+\indexentry{function!nonmember}{121}
+\indexentry{interface}{121}
+\indexentry{implementation}{121}
+\indexentry{invoke}{121}
+\indexentry{constructor}{121}
+\indexentry{composition}{123}
+\indexentry{nested structure}{123}
+\indexentry{Card}{123}
+\indexentry{class!Card}{123}
+\indexentry{rank}{123}
+\indexentry{suit}{123}
+\indexentry{encode}{123}
+\indexentry{encrypt}{123}
+\indexentry{map to}{123}
+\indexentry{constructor}{124}
+\indexentry{printCard}{125}
+\indexentry{print!Card}{125}
+\indexentry{apstring!vector of}{125}
+\indexentry{vector!of apstring}{125}
+\indexentry{state diagram}{125}
+\indexentry{same}{127}
+\indexentry{isGreater}{128}
+\indexentry{operator!comparison}{128}
+\indexentry{comparison operator}{128}
+\indexentry{ordering}{128}
+\indexentry{complete ordering}{128}
+\indexentry{partial ordering}{128}
+\indexentry{comparable}{128}
+\indexentry{vector!of object}{129}
+\indexentry{object!vector of}{129}
+\indexentry{deck}{129}
+\indexentry{state diagram}{130}
+\indexentry{loop!nested}{130}
+\indexentry{nested loop}{130}
+\indexentry{index}{130}
+\indexentry{encapsulation}{130}
+\indexentry{printDeck}{131}
+\indexentry{print!vector of Cards}{131}
+\indexentry{searching}{131}
+\indexentry{linear search}{131}
+\indexentry{find}{131}
+\indexentry{traverse}{131}
+\indexentry{loop!search}{131}
+\indexentry{pattern!eureka}{131}
+\indexentry{statement!return}{131}
+\indexentry{return!inside loop}{131}
+\indexentry{bisection search}{132}
+\indexentry{findBisect}{132}
+\indexentry{recursion}{133}
+\indexentry{testing}{134}
+\indexentry{correctness}{134}
+\indexentry{recursion!infinite}{134}
+\indexentry{infinite recursion}{134}
+\indexentry{run-time error}{134}
+\indexentry{deck}{135}
+\indexentry{subdeck}{135}
+\indexentry{parameter!abstract}{135}
+\indexentry{abstract parameter}{135}
+\indexentry{abstraction}{135}
+\indexentry{encode}{135}
+\indexentry{abstract parameter}{135}
+\indexentry{type!enumerated}{137}
+\indexentry{enumerated type}{137}
+\indexentry{mapping}{137}
+\indexentry{convention}{138}
+\indexentry{switch statement}{138}
+\indexentry{statement!switch}{138}
+\indexentry{break statement}{139}
+\indexentry{statement!break}{139}
+\indexentry{default}{139}
+\indexentry{deck}{140}
+\indexentry{vector!of Cards}{140}
+\indexentry{instance variable}{140}
+\indexentry{variable!instance}{140}
+\indexentry{constructor}{140}
+\indexentry{state diagram}{140}
+\indexentry{constructor}{140}
+\indexentry{constructor}{141}
+\indexentry{loop!nested}{141}
+\indexentry{member function}{141}
+\indexentry{function!member}{141}
+\indexentry{printDeck}{141}
+\indexentry{structure definition}{142}
+\indexentry{shuffling}{143}
+\indexentry{pseudocode}{143}
+\indexentry{random number}{143}
+\indexentry{swapCards}{143}
+\indexentry{reference}{143}
+\indexentry{sorting}{143}
+\indexentry{top-down design}{144}
+\indexentry{program development!top-down}{144}
+\indexentry{bottom-up design}{144}
+\indexentry{program development!bottom-up}{144}
+\indexentry{helper function}{144}
+\indexentry{function!helper}{144}
+\indexentry{subdeck}{144}
+\indexentry{constructor}{144}
+\indexentry{overloading}{144}
+\indexentry{shuffling}{145}
+\indexentry{dealing}{145}
+\indexentry{efficiency}{145}
+\indexentry{sorting}{145}
+\indexentry{mergesort}{145}
+\indexentry{testing}{146}
+\indexentry{recursion}{147}
+\indexentry{leap of faith}{147}
+\indexentry{pseudocode}{147}
+\indexentry{helper function}{147}
+\indexentry{bottom-up design}{147}
+\indexentry{program development!bottom-up}{147}
+\indexentry{function!helper}{147}
+\indexentry{mergesort}{147}
+\indexentry{private}{149}
+\indexentry{class}{149}
+\indexentry{data encapsulation}{149}
+\indexentry{encapsulation!data}{149}
+\indexentry{encapsulation!functional}{149}
+\indexentry{interface}{149}
+\indexentry{implementation}{149}
+\indexentry{representation}{149}
+\indexentry{client programs}{149}
+\indexentry{detail hiding}{149}
+\indexentry{accessor function}{150}
+\indexentry{function!accessor}{150}
+\indexentry{class}{150}
+\indexentry{struct}{150}
+\indexentry{object-oriented programming}{150}
+\indexentry{public}{151}
+\indexentry{private}{151}
+\indexentry{complex number}{151}
+\indexentry{Complex}{151}
+\indexentry{class!Complex}{151}
+\indexentry{arithmetic!complex}{151}
+\indexentry{instance variable}{151}
+\indexentry{variable!instance}{151}
+\indexentry{constructor}{151}
+\indexentry{coordinate}{151}
+\indexentry{coordinate!Cartesian}{151}
+\indexentry{coordinate!polar}{151}
+\indexentry{Cartesian coordinate}{151}
+\indexentry{polar coordinate}{151}
+\indexentry{instance variable}{153}
+\indexentry{variable!instance}{153}
+\indexentry{flag}{153}
+\indexentry{constructor}{153}
+\indexentry{accessor function}{153}
+\indexentry{function!accessor}{153}
+\indexentry{flag}{153}
+\indexentry{output}{154}
+\indexentry{pure function}{155}
+\indexentry{pure function}{155}
+\indexentry{invariant}{156}
+\indexentry{data encapsulation}{157}
+\indexentry{encapsulation!data}{157}
+\indexentry{precondition}{157}
+\indexentry{postcondition}{157}
+\indexentry{exit}{158}
+\indexentry{assert}{158}
+\indexentry{run-time error}{158}
+\indexentry{private!function}{159}
+\indexentry{class}{160}
+\indexentry{accessor function}{160}
+\indexentry{invariant}{160}
+\indexentry{precondition}{160}
+\indexentry{postcondition}{160}
+\indexentry{stream}{161}
+\indexentry{header file}{161}
+\indexentry{cin}{162}
+\indexentry{cout}{162}
+\indexentry{istream}{162}
+\indexentry{ostream}{162}
+\indexentry{file!input}{162}
+\indexentry{ifstream}{162}
+\indexentry{stream!status}{162}
+\indexentry{good}{162}
+\indexentry{eof}{162}
+\indexentry{end of file}{162}
+\indexentry{c\_str}{163}
+\indexentry{C string}{163}
+\indexentry{string!native C}{163}
+\indexentry{loop!infinite}{163}
+\indexentry{infinite loop}{163}
+\indexentry{break statement}{163}
+\indexentry{statement!break}{163}
+\indexentry{getline}{163}
+\indexentry{file output}{163}
+\indexentry{ofstream}{163}
+\indexentry{parsing}{163}
+\indexentry{special character}{164}
+\indexentry{character!special sequence}{164}
+\indexentry{backslash}{164}
+\indexentry{find}{164}
+\indexentry{parsing number}{165}
+\indexentry{atoi}{165}
+\indexentry{convert!to integer}{165}
+\indexentry{character!classification}{165}
+\indexentry{isdigit}{165}
+\indexentry{concatentation}{166}
+\indexentry{string!concatentation}{166}
+\indexentry{accumulator}{166}
+\indexentry{pattern!accumulator}{166}
+\indexentry{Set}{166}
+\indexentry{data structure}{166}
+\indexentry{ordering}{166}
+\indexentry{constructor}{167}
+\indexentry{data encapsulation}{167}
+\indexentry{encapsulation!data}{167}
+\indexentry{run-time error}{168}
+\indexentry{state diagram}{169}
+\indexentry{matrix}{169}
+\indexentry{apmatrix}{169}
+\indexentry{index}{169}
+\indexentry{constructor}{170}
+\indexentry{run-time error}{170}
+\indexentry{loop!nested}{170}
+\indexentry{resize}{171}
+\indexentry{ordered set}{173}
+\indexentry{set!ordered}{173}
+\indexentry{stream}{173}
+\indexentry{accumulator}{173}
+\indexentry{pattern!accumulator}{173}

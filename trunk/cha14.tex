@@ -1,0 +1,759 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+\chapter{Classes and invariants}
+\label{class}
+
+\section{Private data and classes}
+\index{private}
+\index{class}
+\index{data encapsulation}
+\index{encapsulation!data}
+\index{encapsulation!functional}
+
+I have used the word ``encapsulation'' in this book to refer
+to the process of wrapping up a sequence of instructions in
+a function, in order to separate the function's interface (how
+to use it) from its implementation (how it does what it does).
+
+This kind of encapsulation might be called ``functional
+encapsulation,'' to distinguish it from ``data encapsulation,'' which
+is the topic of this chapter.  Data encapsulation is based on the idea
+that each structure definition should provide a set of functions that
+apply to the structure, and prevent unrestricted access to the
+internal representation.
+
+\index{interface}
+\index{implementation}
+\index{representation}
+
+One use of data encapsulation is to hide implementation details 
+from users or programmers that don't need to know them.
+
+For example, there are many possible representations for a {\tt Card},
+including two integers, two strings and two enumerated types.  The
+programmer who writes the {\tt Card} member functions needs to
+know which implementation to use, but
+someone using
+the {\tt Card} structure should not have to know anything about
+its internal structure.
+
+As another example, we have been using {\tt apstring} and
+{\tt apvector} objects without ever discussing their implementations.
+There are many possibilities, but as ``clients'' of these
+libraries, we don't need to know.
+
+\index{client programs}
+\index{detail hiding}
+
+In C++, the most common way to enforce data encapsulation is
+to prevent client programs from accessing the instance variables
+of an object.  The keyword {\tt private} is used to protect parts
+of a structure definition.  For example, we could have written
+the {\tt Card} definition:
+
+\begin{verbatim}
+struct Card
+{
+private:
+  int suit, rank;
+
+public:
+  Card ();
+  Card (int s, int r);
+
+  int getRank () const { return rank; }
+  int getSuit () const { return suit; }
+  void setRank (int r) { rank = r; }
+  void setSuit (int s) { suit = s; }
+};
+\end{verbatim}
+%
+There are two sections of this definition, a private part and
+a public part.  The functions are public, which means that they
+can be invoked by client programs.  The instance variables are
+private, which means that they can be read and written only by
+{\tt Card} member functions.
+
+\index{accessor function}
+\index{function!accessor}
+
+It is still possible for client programs to read and
+write the instance variables using the {\bf accessor functions}
+(the ones beginning with {\tt get} and {\tt set}).
+On the other hand, it is now easy to control which
+operations clients can perform on which instance variables.
+For example, it might be a good idea to make cards ``read only''
+so that after they are constructed, they cannot be changed.
+To do that, all we have to do is remove the {\tt set} functions.
+
+Another advantage of using accessor functions is that we
+can change the internal representations of cards without
+having to change any client programs.
+
+\section{What is a class?}
+\index{class}
+\index{struct}
+\index{object-oriented programming}
+
+In most object-oriented programming languages, a {\bf class} is
+a user-defined type that includes a set of functions.  As
+we have seen, structures in C++ meet the general definition of
+a class.
+
+But there is another feature in C++ that also meets this definition;
+confusingly, it is called a {\tt class}.  In C++, a class
+is just a structure whose instance variables are private by
+default.  For example, I could have written the {\tt Card}
+definition:
+
+\begin{verbatim}
+class Card
+{
+  int suit, rank;
+
+public:
+  Card ();
+  Card (int s, int r);
+
+  int getRank () const { return rank; }
+  int getSuit () const { return suit; }
+  int setRank (int r) { rank = r; }
+  int setSuit (int s) { suit = s; }
+};
+\end{verbatim}
+%
+I replaced the word {\tt struct} with the word {\tt class} and
+removed the {\tt private:} label.  This result of the two definitions
+is exactly the same.
+
+\index{public}
+\index{private}
+
+In fact, anything that can be written as a {\tt struct} can also
+be written as a {\tt class}, just by adding or removing labels.
+There is no real reason to choose one over the other, except that
+as a stylistic choice, most C++ programmers use {\tt class}.
+
+Also, it is common to refer to all user-defined types in C++ as
+``classes,'' regardless of whether they are defined as a {\tt struct}
+or a {\tt class}.
+
+\section{Complex numbers}
+\index{complex number}
+\index{Complex}
+\index{class!Complex}
+\index{arithmetic!complex}
+
+As a running example for the rest of this chapter we will consider a
+class definition for complex numbers.  Complex numbers are useful for
+many branches of mathematics and engineering, and many computations
+are performed using complex arithmetic.  A complex number is the sum
+of a real part and an imaginary part, and is usually written in the
+form $x + yi$, where $x$ is the real part, $y$ is the imaginary part,
+and $i$ represents the square root of -1.
+
+The following is a class definition for a user-defined type called
+{\tt Complex}:
+
+\begin{verbatim}
+class Complex
+{
+  double real, imag;
+
+public:
+  Complex () { }
+  Complex (double r, double i) { real = r;  imag = i; }
+};
+\end{verbatim}
+%
+Because this is a {\tt class} definition, the instance variables
+{\tt real} and {\tt imag} are private, and we have to include
+the label {\tt public:} to allow client code to invoke the
+constructors.
+
+As usual, there are two constructors: one takes no parameters and does
+nothing; the other takes two parameters and uses them to initialize
+the instance variables.
+
+\index{instance variable}
+\index{variable!instance}
+\index{constructor}
+
+So far there is no real advantage to making the instance
+variables private.  Let's make things a little more complicated;
+then the point might be clearer.
+
+\index{coordinate}
+\index{coordinate!Cartesian}
+\index{coordinate!polar}
+\index{Cartesian coordinate}
+\index{polar coordinate}
+
+There is another common representation for complex numbers that is
+sometimes called ``polar form'' because it is based on polar
+coordinates.  Instead of specifying the real part and the imaginary
+part of a point in the complex plane, polar coordinates specify the
+direction (or angle) of the point relative to the origin, and
+the distance (or magnitude) of the point.  
+
+The following figure shows the two coordinate systems graphically.
+
+\vspace {0.1in}
+\centerline{\epsfig{figure=coordinates.eps}}
+\vspace {0.1in}
+
+Complex numbers in polar coordinates are written $r e^{i \theta}$,
+where $r$ is the magnitude (radius), and $\theta$ is the angle in
+radians.
+
+Fortunately, it is easy to convert from one form to another.
+To go from Cartesian to polar,
+
+\begin{eqnarray*}
+r       & = &  \sqrt{x^2 + y^2} \\
+\theta  & = &  \arctan (y / x)
+\end{eqnarray*}
+
+To go from polar to Cartesian,
+
+\begin{eqnarray*}
+x       & = &  r \cos \theta \\
+y       & = &  r \sin \theta
+\end{eqnarray*}
+
+So which representation should we use?  Well, the whole reason there
+are multiple representations is that some operations are easier to
+perform in Cartesian coordinates (like addition), and others are
+easier in polar coordinates (like multiplication).  One option is that
+we can write a class definition that uses {\em both} representations,
+and that converts between them automatically, as needed.
+
+\begin{verbatim}
+class Complex
+{
+  double real, imag;
+  double mag, theta;
+  bool cartesian, polar;
+
+public:
+  Complex () { cartesian = false;  polar = false; }
+
+  Complex (double r, double i)
+  {
+    real = r;  imag = i;
+    cartesian = true;  polar = false;
+  }
+};
+\end{verbatim}
+%
+There are now six instance variables, which means that
+this representation will take up more space than either
+of the others, but we will see that it is very versatile.
+
+\index{instance variable}
+\index{variable!instance}
+
+Four of the instance variables are self-explanatory.  They
+contain the real part, the imaginary part, the angle and
+the magnitude of the complex number.  The other two
+variables, {\tt cartesian} and {\tt polar} are flags that
+indicate whether the corresponding values are currently
+valid.
+
+\index{flag}
+\index{constructor}
+
+For example, the do-nothing constructor sets both flags
+to false to indicate that this object does not contain
+a valid complex number (yet), in either representation.
+
+The second constructor uses the parameters to initialize
+the real and imaginary parts, but it does not calculate the
+magnitude or angle.  Setting the {\tt polar} flag to false
+warns other functions not to access {\tt mag} or {\tt theta}
+until they have been set.
+
+Now it should be clearer why we need to keep the instance
+variables private.  If client programs were allowed unrestricted
+access, it would be easy for them to make errors by reading
+uninitialized values.  In the next few sections, we will
+develop accessor functions that will make those kinds of mistakes
+impossible.
+
+\section{Accessor functions}
+\index{accessor function}
+\index{function!accessor}
+
+By convention, accessor functions have names that
+begin with {\tt get} and end with the name of the instance
+variable they fetch.  The return type, naturally, is the type
+of the corresponding instance variable.
+
+\index{flag}
+
+In this case, the accessor functions give us an opportunity
+to make sure that the value of the variable is valid before
+we return it.  Here's what {\tt getReal} looks like:
+
+\begin{verbatim}
+double Complex::getReal ()
+{
+  if (cartesian == false) calculateCartesian ();
+  return real;
+}
+\end{verbatim}
+%
+If the {\tt cartesian} flag is true then {\tt real} contains
+valid data, and we can just return it.  Otherwise, we have
+to call {\tt calculateCartesian} to convert from polar coordinates
+to Cartesian coordinates:
+
+\begin{verbatim}
+void Complex::calculateCartesian ()
+{
+  real = mag * cos (theta);
+  imag = mag * sin (theta);
+  cartesian = true;
+}
+\end{verbatim}
+%
+Assuming that the polar coordinates are valid, we
+can calculate the Cartesian coordinates using the formulas
+from the previous section.  Then we
+set the {\tt cartesian} flag, indicating that {\tt real}
+and {\tt imag} now contain valid data.
+
+As an exercise, write a corresponding function called
+{\tt calculatePolar} and then write {\tt getMag}
+and {\tt getTheta}.  One unusual thing about these
+accessor functions is that they are not {\tt const},
+because invoking them might modify the instance variables.
+
+\section{Output}
+\index{output}
+
+As usual when we define a new class, we want to be able to
+output objects in a human-readable form.  For {\tt Complex}
+objects, we could use two functions:
+
+\begin{verbatim}
+void Complex::printCartesian ()
+{
+  cout << getReal() << " + " << getImag() << "i" << endl;
+}
+
+void Complex::printPolar ()
+{
+  cout << getMag() << " e^ " << getTheta() << "i" << endl;
+}
+\end{verbatim}
+%
+The nice thing here is that we can output any {\tt Complex} object in
+either format without having to worry about the representation.  Since
+the output functions use the accessor functions, the program
+will compute automatically any values that are needed.
+
+The following code creates a {\tt Complex} object using the
+second constructor.   Initially, it is in Cartesian format only.
+When we invoke {\tt printCartesian} it accesses {\tt real} and
+{\tt imag} without having to do any conversions.
+
+\begin{verbatim}
+  Complex c1 (2.0, 3.0);
+
+  c1.printCartesian();
+  c1.printPolar();
+\end{verbatim}
+%
+When we invoke {\tt printPolar}, and {\tt printPolar} invokes
+{\tt getMag}, the program is forced to convert to polar
+coordinates and store the results in the instance variables.
+The good news is that we only have to do the conversion
+once.  When {\tt printPolar} invokes {\tt getTheta}, it will
+see that the polar coordinates are valid and return {\tt theta}
+immediately.
+
+The output of this code is:
+
+\begin{verbatim}
+2 + 3i
+3.60555 e^ 0.982794i
+\end{verbatim}
+
+\section{A function on {\tt Complex} numbers}
+\index{pure function}
+
+A natural operation we might want to perform on complex numbers is
+addition.  If the numbers are in Cartesian coordinates, addition is
+easy: you just add the real parts together and the imaginary parts
+together.  If the numbers are in polar coordinates, it is easiest to
+convert them to Cartesian coordinates and then add them.
+
+Again, it is easy to deal with these cases if we use
+the accessor functions:
+
+\begin{verbatim}
+Complex add (Complex& a, Complex& b)
+{
+  double real = a.getReal() + b.getReal();
+  double imag = a.getImag() + b.getImag();
+  Complex sum (real, imag);
+  return sum;
+}
+\end{verbatim}
+%
+Notice that the arguments to {\tt add} are not {\tt const}
+because they might be modified when we invoke the accessors.
+To invoke this function, we would pass both operands as arguments:
+
+\begin{verbatim}
+  Complex c1 (2.0, 3.0);
+  Complex c2 (3.0, 4.0);
+
+  Complex sum = add (c1, c2);
+  sum.printCartesian();
+\end{verbatim}
+%
+The output of this program is
+
+\begin{verbatim}
+5 + 7i
+\end{verbatim}
+%
+
+
+\section{Another function on {\tt Complex} numbers}
+\index{pure function}
+
+Another operation we might want is multiplication.  Unlike
+addition, multiplication is easy if the numbers are in polar
+coordinates and hard if they are in Cartesian coordinates
+(well, a little harder, anyway).
+
+In polar coordinates, we can just multiply the magnitudes and
+add the angles.  As usual, we can use the accessor functions
+without worrying about the representation of the objects.
+
+\begin{verbatim}
+Complex mult (Complex& a, Complex& b)
+{
+  double mag = a.getMag() * b.getMag()
+  double theta = a.getTheta() + b.getTheta();
+  Complex product;
+  product.setPolar (mag, theta);
+  return product;
+}
+\end{verbatim}
+%
+A small problem we encounter here is that we have no constructor
+that accepts polar coordinates.  It would be nice to write one,
+but remember that we can only overload a function (even a
+constructor) if the different versions take different parameters.
+In this case, we would like a second constructor that also takes
+two {\tt double}s, and we can't have that.
+
+An alternative it to provide an accessor function that {\em sets}
+the instance variables.  In order to do that properly, though,
+we have to make sure that when {\tt mag} and {\tt theta} are set,
+we also set the {\tt polar} flag.  At the same time, we have to
+make sure that the {\tt cartesian} flag is unset.  That's because
+if we change the polar coordinates, the cartesian coordinates are
+no longer valid.
+
+\begin{verbatim}
+void Complex::setPolar (double m, double t)
+{
+  mag = m;  theta = t;
+  cartesian = false;  polar = true;
+}
+\end{verbatim}
+%
+As an exercise, write the corresponding function named
+{\tt setCartesian}.
+
+To test the {\tt mult} function, we can try something like:
+
+\begin{verbatim}
+  Complex c1 (2.0, 3.0);
+  Complex c2 (3.0, 4.0);
+
+  Complex product = mult (c1, c2);
+  product.printCartesian();
+\end{verbatim}
+%
+The output of this program is
+
+\begin{verbatim}
+-6 + 17i
+\end{verbatim}
+%
+There is a lot of conversion going on in this program behind the
+scenes.  When we call {\tt mult}, both arguments get converted to
+polar coordinates.  The result is also in polar format, so when we
+invoke {\tt printCartesian} it has to get converted back.  Really,
+it's amazing that we get the right answer!
+
+
+\section{Invariants}
+\index{invariant}
+
+There are several conditions we expect to be true for a proper
+{\tt Complex} object.  For example, if the {\tt cartesian} flag
+is set then we expect {\tt real} and {\tt imag} to contain valid
+data.  Similarly, if {\tt polar} is set, we expect {\tt mag}
+and {\tt theta} to be valid.  Finally, if both flags are set
+then we expect the other four variables to be consistent;
+that is, they should be specifying the same point in two different
+formats.
+
+These kinds of conditions are called {\tt invariants}, for the obvious
+reason that they do not vary---they are always supposed to be true.
+One of the ways to write good quality code that contains few bugs
+is to figure out what invariants are appropriate for your classes,
+and write code that makes it impossible to violate them.
+
+\index{data encapsulation}
+\index{encapsulation!data}
+
+One of the primary things that data encapsulation is good for
+is helping to enforce invariants.  The first step is to prevent
+unrestricted access to the instance variables by making them
+private.  Then the only way to modify the object is through
+accessor functions and modifiers.  If we examine all the accessors
+and modifiers, and we can show that every one of them maintains
+the invariants, then we can prove that it is impossible for
+an invariant to be violated.
+
+Looking at the {\tt Complex} class, we can list the functions
+that make assignments to one or more instance variables:
+
+\begin{verbatim}
+the second constructor
+calculateCartesian
+calculatePolar
+setCartesian
+setPolar
+\end{verbatim}
+%
+In each case, it is straightforward to show that the function
+maintains each of the invariants I listed.  We have to be a little
+careful, though.  Notice that I said ``maintain'' the invariant.
+What that means is ``If the invariant is true when the function
+is called, it will still be true when the function is complete.''
+
+That definition allows two loopholes.  First, there may be some
+point in the middle of the function when the invariant is not
+true.  That's ok, and in some cases unavoidable.  As long as the
+invariant is restored by the end of the function, all is well.
+
+The other loophole is that we only have to maintain the invariant
+if it was true at the beginning of the function.  Otherwise, all
+bets are off.  If the invariant was violated somewhere else in
+the program, usually the best we can do is detect the error,
+output an error message, and exit.
+
+\section{Preconditions}
+\index{precondition}
+\index{postcondition}
+
+Often when you write a function you make implicit assumptions
+about the parameters you receive.  If those assumptions turn
+out to be true, then everything is fine; if not, your program
+might crash.
+
+To make your programs more robust, it is a good idea to think
+about your assumptions explicitly, document them as part of the
+program, and maybe write code that checks them.
+
+For example, let's take another look at {\tt calculateCartesian}.
+Is there an assumption we make about the current object?  Yes,
+we assume that the {\tt polar} flag is set and that {\tt mag}
+and {\tt theta} contain valid data.  If that is not true, then
+this function will produce meaningless results.
+
+One option is to add a comment to the function that warns
+programmers about the {\bf precondition}.
+
+\begin{verbatim}
+void Complex::calculateCartesian ()
+// precondition: the current object contains valid polar coordinates
+	and the polar flag is set
+// postcondition: the current object will contain valid Cartesian
+	coordinates and valid polar coordinates, and both the cartesian
+	flag and the polar flag will be set
+{
+  real = mag * cos (theta);
+  imag = mag * sin (theta);
+  cartesian = true;
+}
+\end{verbatim}
+%
+At the same time, I also commented on the {\bf postconditions},
+the things we know will be true when the function completes.
+
+These comments are useful for people reading your programs, but
+it is an even better idea to add code that {\em checks} the
+preconditions, so that we can print an appropriate error message:
+
+\begin{verbatim}
+void Complex::calculateCartesian ()
+{
+  if (polar == false) {
+    cout <<
+    "calculateCartesian failed because the polar representation is invalid"
+	 << endl;
+    exit (1);
+  }
+  real = mag * cos (theta);
+  imag = mag * sin (theta);
+  cartesian = true;
+}
+\end{verbatim}
+%
+The {\tt exit} function causes the program to quit immediately.  The
+return value is an error code that tells the system (or whoever
+executed the program) that something went wrong.
+
+\index{exit}
+\index{assert}
+\index{run-time error}
+
+This kind of error-checking is so common that C++ provides
+a built-in function to check preconditions and print error messages.
+If you include the {\tt assert.h} header file, you get a function
+called {\tt assert} that takes a boolean value (or a conditional
+expression) as an argument.  As long as the argument is true,
+{\tt assert} does nothing.  If the argument is false, assert
+prints an error message and quits.  Here's how to use it:
+
+\begin{verbatim}
+void Complex::calculateCartesian ()
+{
+  assert (polar);
+  real = mag * cos (theta);
+  imag = mag * sin (theta);
+  cartesian = true;
+  assert (polar && cartesian);
+}
+\end{verbatim}
+%
+The first {\tt assert} statement checks the precondition
+(actually just part of it); the second {\tt assert} statement
+checks the postcondition.
+
+In my development environment, I get the following message
+when I violate an assertion:
+
+\begin{verbatim}
+Complex.cpp:63: void Complex::calculatePolar(): Assertion `cartesian' failed.
+Abort
+\end{verbatim}
+%
+There is a lot of information here to help me track down the error,
+including the file name and line number of the assertion that
+failed, the function name and the contents of the assert statement.
+
+
+\section{Private functions}
+\index{private!function}
+
+In some cases, there are member functions that are used internally
+by a class, but that should not be invoked by client programs.
+For example, {\tt calculatePolar} and {\tt calculateCartesian}
+are used by the accessor functions, but there is probably no
+reason clients should call them directly (although it would not
+do any harm).  If we wanted to protect these functions, we
+could declare them {\tt private} the same way we do with instance
+variables.  In that case the complete class definition for
+{\tt Complex} would look like:
+
+\begin{verbatim}
+class Complex
+{
+private:
+  double real, imag;
+  double mag, theta;
+  bool cartesian, polar;
+
+  void calculateCartesian ();
+  void calculatePolar ();
+
+public:
+  Complex () { cartesian = false;  polar = false; }
+
+  Complex (double r, double i)
+  {
+    real = r;  imag = i;
+    cartesian = true;  polar = false;
+  }
+
+  void printCartesian ();
+  void printPolar ();
+
+  double getReal ();
+  double getImag ();
+  double getMag ();
+  double getTheta ();
+
+  void setCartesian (double r, double i);
+  void setPolar (double m, double t);
+};
+\end{verbatim}
+%
+The {\tt private} label at the beginning is not necessary,
+but it is a useful reminder.
+
+\section{Glossary}
+
+\begin{description}
+
+\item[class:]  In general use, a class is a user-defined type
+with member functions.  In C++, a class is a structure with
+private instance variables.
+
+\item[accessor function:]  A function that provides access
+(read or write) to a private instance variable.
+
+\item[invariant:]  A condition, usually pertaining to an object, that
+should be true at all times in client code, and that should be
+maintained by all member functions.
+
+\item[precondition:]  A condition that is assumed to be true at
+the beginning of a function.  If the precondition is not true, the
+function may not work.  It is often a good idea for functions to
+check their preconditions, if possible.
+
+\item[postcondition:]  A condition that is true at the end of a
+function. 
+
+\index{class}
+\index{accessor function}
+\index{invariant}
+\index{precondition}
+\index{postcondition}
+
+\end{description}
+

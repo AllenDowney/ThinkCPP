@@ -1,0 +1,578 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+\chapter{More structures}
+\label{time}
+\index{struct}
+
+\section{Time}
+\index{struct!Time}
+\index{Time}
+
+As a second example of a user-defined structure, we will define a type
+called {\tt Time}, which is used to record the time of day.  The
+various pieces of information that form a time are the hour, minute
+and second, so these will be the instance variables of the structure.
+
+The first step is to decide what type each instance variable should
+be.  It seems clear that {\tt hour} and {\tt minute} should be
+integers.  Just to keep things interesting, let's make {\tt second} a
+{\tt double}, so we can record fractions of a second.
+
+Here's what the structure definition looks like:
+
+\begin{verbatim}
+struct Time {
+  int hour, minute;
+  double second;
+};
+\end{verbatim}
+%
+We can create a {\tt Time} object in the usual way:
+
+\begin{verbatim}
+  Time time = { 11, 59, 3.14159 };
+\end{verbatim}
+%
+The state diagram for this object looks like this:
+
+\vspace{0.1in}
+\centerline{\epsfig{figure=time.eps}}
+\vspace{0.1in}
+
+The word ``instance'' is sometimes used when we talk about objects,
+because every object is an instance (or example) of some type.  The
+reason that instance variables are so-named is that every instance of
+a type has a copy of the instance variables for that type.
+
+\section{{\tt printTime}}
+\label{printobject}
+\index{output}
+\index{statement!output}
+\index{object!output}
+
+When we define a new type it is a good idea to write
+function that displays the instance variables in a human-readable
+form.  For example:
+
+\begin{verbatim}
+void printTime (Time& t) {
+  cout << t.hour << ":" << t.minute << ":" << t.second << endl;
+}
+\end{verbatim}
+%
+The output of this function, if we pass {\tt time}
+an argument, is {\tt 11:59:3.14159}.
+
+\begin{verbatim}
+#include <iostream>
+
+using namespace std;
+
+struct Time {
+  int hour, minute;
+  double second;
+};
+
+
+void printTime (Time& t) {
+  cout << t.hour << ":" << t.minute << ":" << t.second << endl;
+  cout << "Time is " << t.hour << " hour " << t.minute << " minutes " << t.second << "  seconds  "<<endl;
+}
+
+
+int main ()
+{
+ Time time = { 11, 59, 3.14159 };
+ printTime(time);
+ 
+ return 0;
+}
+\end{verbatim}
+%
+
+\section{Functions for objects}
+\label{objectops}
+\index{object}
+\index{function!for objects}
+
+In the next few
+sections, I will demonstrate several possible interfaces for
+functions that operate on objects.  For some operations, you will have a
+choice of several possible interfaces, so you should consider the pros
+and cons of each of these:
+
+\begin{description}
+
+\item[pure function:]  Takes objects and/or basic types as
+arguments but does not modify the objects.  The return value is
+either a basic type or a new object created inside the function.
+
+\item[modifier:]  Takes objects as parameters and modifies some
+or all of them.  Often returns void. \index{void}
+
+\item[fill-in function:]  One of the parameters is an ``empty''
+object that gets filled in by the function.  Technically, this is
+a type of modifier.
+
+\end{description}
+
+\section{Pure functions}
+\index{pure function}
+\index{function}
+\index{function!pure function}
+
+A function is considered a pure function if the result depends only on
+the arguments, and it has no side effects like modifying an argument
+or outputting something.  The only result of calling a pure function is
+the return value.
+
+One example is {\tt after}, which compares two {\tt Time}s and
+returns a {\tt bool} that indicates whether the first operand
+comes after the second:
+
+\begin{verbatim}
+bool after (Time& time1, Time& time2) {
+  if (time1.hour > time2.hour) return true;
+  if (time1.hour < time2.hour) return false;
+
+  if (time1.minute > time2.minute) return true;
+  if (time1.minute < time2.minute) return false;
+
+  if (time1.second > time2.second) return true;
+  return false;
+}
+\end{verbatim}
+%
+What is the result of this function if the two times are equal?  Does
+that seem like the appropriate result for this function?  If you were
+writing the documentation for this function, would you mention that case
+specifically?
+
+A second example is {\tt addTime}, which calculates the sum of two
+times.  For example, if it is {\tt 9:14:30}, and your breadmaker takes
+3 hours and 35 minutes, you could use {\tt addTime} to figure out when
+the bread will be done.
+
+Here is a rough draft of this function that is not quite right:
+
+\begin{verbatim}
+Time addTime (Time& t1, Time& t2) {
+  Time sum;
+  sum.hour = t1.hour + t2.hour;
+  sum.minute = t1.minute + t2.minute;
+  sum.second = t1.second + t2.second;
+  return sum;
+}
+\end{verbatim}
+%
+Here is an example of how to use this function.  If {\tt currentTime}
+contains the current time and {\tt breadTime} contains the amount
+of time it takes for your breadmaker to make bread, then you
+could use {\tt addTime} to figure out when the bread will be
+done.
+
+\begin{verbatim}
+  Time currentTime = { 9, 14, 30.0 };
+  Time breadTime = { 3, 35, 0.0 };
+  Time doneTime = addTime (currentTime, breadTime);
+  printTime (doneTime);
+\end{verbatim}
+%
+The output of this program is {\tt 12:49:30}, which is
+correct.  On the other hand, there are cases where the result
+is not correct.  Can you think of one?
+
+The problem is that this function does not deal with cases
+where the number of seconds or minutes adds up to more than
+60.  When that happens we have to ``carry'' the extra seconds
+into the minutes column, or extra minutes into the hours
+column.
+
+Here's a second, corrected version of this function.
+
+\begin{verbatim}
+Time addTime (Time& t1, Time& t2) {
+  Time sum;
+  sum.hour = t1.hour + t2.hour;
+  sum.minute = t1.minute + t2.minute;
+  sum.second = t1.second + t2.second;
+
+  if (sum.second >= 60.0) {
+    sum.second -= 60.0;
+    sum.minute += 1;
+  }
+  if (sum.minute >= 60) {
+    sum.minute -= 60;
+    sum.hour += 1;
+  }
+  return sum;
+}
+\end{verbatim}
+%
+Although it's correct, it's starting to get big.  Later,
+I will suggest an alternate approach to this problem that
+will be much shorter.
+
+\index{increment}
+\index{decrement}
+\index{operator!increment}
+\index{operator!decrement}
+
+This code demonstrates two operators we have not seen before, {\tt +=}
+and {\tt -=}.  These operators provide a concise way to increment and
+decrement variables.  For example, the statement {\tt sum.second -=
+60.0;} is equivalent to {\tt sum.second = sum.second - 60;}
+
+\section{{\tt const} parameters}
+
+You might have noticed that the parameters for {\tt after}
+and {\tt addTime} are being passed by reference.  Since
+these are pure functions, they do not modify the parameters
+they receive, so I could just as well have passed them by
+value.
+
+The advantage of passing by value is that the calling function
+and the callee are appropriately encapsulated---it is not possible
+for a change in one to affect the other, except by affecting
+the return value.
+
+On the other hand, passing by reference usually is more efficient,
+because it avoids copying the argument.  Furthermore, there is a nice
+feature in C++, called {\tt const}, that can make reference parameters
+just as safe as value parameters.
+
+If you are writing a function and you do not intend to modify
+a parameter, you can declare that it is a {\bf constant
+reference parameter}.  The syntax looks like this:
+
+\begin{verbatim}
+void printTime (const Time& time) ...
+Time addTime (const Time& t1, const Time& t2) ...
+\end{verbatim}
+%
+I've included only the first line of the functions.  If you tell
+the compiler that you don't intend to change a
+parameter, it can help remind you.  If you try to change one,
+you should get a compiler error, or at least a warning.
+
+\index{run-time error}
+\index{error!run-time}
+
+\section{Modifiers}
+\index{modifier}
+\index{function!modifier}
+
+Of course, sometimes you {\em want} to modify one of the
+arguments.  Functions that do are called modifiers.
+
+As an example of a modifier, consider {\tt increment},
+which adds a given number of seconds to a {\tt Time} object.
+Again, a rough draft of this function looks like:
+
+\begin{verbatim}
+void increment (Time& time, double secs) {
+  time.second += secs;
+
+  if (time.second >= 60.0) {
+    time.second -= 60.0;
+    time.minute += 1;
+  }
+  if (time.minute >= 60) {
+    time.minute -= 60;
+    time.hour += 1;
+  }
+}
+\end{verbatim}
+%
+The first line performs the basic operation; the remainder
+deals with the special cases we saw before.
+
+Is this function correct?  What happens if the argument {\tt secs}
+is much greater than 60?  In that case, it is not enough to
+subtract 60 once; we have to keep doing it until {\tt second}
+is below 60.  We can do that by replacing the {\tt if}
+statements with {\tt while} statements:
+
+\begin{verbatim}
+void increment (Time& time, double secs) {
+  time.second += secs;
+
+  while (time.second >= 60.0) {
+    time.second -= 60.0;
+    time.minute += 1;
+  }
+  while (time.minute >= 60) {
+    time.minute -= 60;
+    time.hour += 1;
+  }
+}
+\end{verbatim}
+%
+This solution is correct, but not very efficient.
+Can you think of a solution that does not require iteration?
+
+\section{Fill-in functions}
+\index{fill-in function}
+\index{function!fill-in}
+
+Occasionally you will see functions like {\tt addTime} written
+with a different interface (different arguments and return values).
+Instead of creating a new object every time {\tt addTime} is
+called, we could require the caller to provide an ``empty''
+object where {\tt addTime} can store the result.  Compare
+the following with the previous version:
+
+\begin{verbatim}
+void addTimeFill (const Time& t1, const Time& t2, Time& sum) {
+  sum.hour = t1.hour + t2.hour;
+  sum.minute = t1.minute + t2.minute;
+  sum.second = t1.second + t2.second;
+
+  if (sum.second >= 60.0) {
+    sum.second -= 60.0;
+    sum.minute += 1;
+  }
+  if (sum.minute >= 60) {
+    sum.minute -= 60;
+    sum.hour += 1;
+  }
+}
+\end{verbatim}
+%
+One advantage of this approach is that the caller has the option of
+reusing the same object repeatedly to perform a series of additions.
+This can be slightly more efficient, although it can be confusing
+enough to cause subtle errors.  For the vast majority of programming,
+it is worth a spending a little run time to avoid a lot of debugging
+time.
+
+Notice that the first two parameters can be declared {\tt const},
+but the third cannot.
+
+\section{Which is best?}
+\index{programming style}
+
+Anything that can be done with modifiers and fill-in functions can also
+be done with pure functions.  In fact, there are programming
+languages, called {\bf functional} programming languages, that only
+allow pure functions.  Some programmers believe that programs that use
+pure functions are faster to develop and less error-prone than
+programs that use modifiers.  Nevertheless, there are times when
+modifiers are convenient, and cases where functional programs
+are less efficient.
+
+In general, I recommend that you write pure functions whenever
+it is reasonable to do so, and resort to modifiers only if there
+is a compelling advantage.  This approach might be called a
+functional programming style.
+
+\section{Incremental development versus planning}
+\index{incremental development}
+\index{prototyping}
+\index{program development!incremental}
+\index{program development!planning}
+
+In this chapter I have demonstrated an approach to program
+development I refer to as {\bf rapid prototyping with iterative
+improvement}.  In each case, I wrote a rough draft (or prototype)
+that performed the basic calculation, and then tested it on
+a few cases, correcting flaws as I found them.
+
+Although this approach can be effective, it can lead to code
+that is unnecessarily complicated---since it deals with many
+special cases---and unreliable---since it is hard to know if
+you have found all the errors.
+
+An alternative is high-level planning, in which a little insight
+into the problem can make the programming much easier.  In
+this case the insight is that a {\tt Time} is really a three-digit
+number in base 60!  The {\tt second} is the ``ones column,''
+the {\tt minute} is the ``60's column'', and the {\tt hour}
+is the ``3600's column.''
+
+When we wrote {\tt addTime} and {\tt increment}, we were effectively
+doing addition in base 60, which is why we had to ``carry'' from one
+column to the next.
+
+\index{arithmetic!base 60}
+\index{arithmetic!floating-point}
+
+Thus an alternate approach to the whole problem is to convert
+{\tt Time}s into {\tt double}s and take advantage of the fact that
+the computer already knows how to do arithmetic with {\tt double}s.
+Here is a function that converts a {\tt Time} into a {\tt double}:
+
+\begin{verbatim}
+double convertToSeconds (const Time& t) {
+  int minutes = t.hour * 60 + t.minute;
+  double seconds = minutes * 60 + t.second;
+  return seconds;
+}
+\end{verbatim}
+%
+Now all we need is a way to convert from a {\tt double}
+to a {\tt Time} object:
+
+\begin{verbatim}
+Time makeTime (double secs) {
+  Time time;
+  time.hour = int (secs / 3600.0);
+  secs -= time.hour * 3600.0;
+  time.minute = int (secs / 60.0);
+  secs -= time.minute * 60;
+  time.second = secs;
+  return time;
+}
+\end{verbatim}
+%
+You might have to think a bit to convince yourself that the technique
+I am using to convert from one base to another is correct.  Assuming
+you are convinced, we can use these functions to rewrite {\tt addTime}:
+
+\begin{verbatim}
+Time addTime (const Time& t1, const Time& t2) {
+  double seconds = convertToSeconds (t1) + convertToSeconds (t2);
+  return makeTime (seconds);
+}
+\end{verbatim}
+%
+This is much shorter than the original version, and it is much easier
+to demonstrate that it is correct (assuming, as usual, that the
+functions it calls are correct).  As an exercise, rewrite {\tt
+increment} the same way.
+
+
+\section{Generalization}
+\index{generalization}
+
+In some ways converting from base 60 to base 10 and back is
+harder than just dealing with times.  Base conversion is more
+abstract; our intuition for dealing with times is better.
+
+But if we have the insight to treat times as base 60 numbers,
+and make the investment of writing the conversion functions
+({\tt convertToSeconds} and {\tt makeTime}), we get
+a program that is shorter, easier to read and debug, and more
+reliable.
+
+It is also easier to add more features later.  For example, imagine
+subtracting two {\tt Time}s to find the duration between them.  The
+naive approach would be to implement subtraction with
+borrowing.  Using the conversion functions would be easier and more
+likely to be correct.
+
+Ironically, sometimes making a problem harder (more general)
+makes is easier (fewer special cases, fewer opportunities for error).
+
+\section{Algorithms}
+\label{algorithm}
+\index{algorithm}
+
+When you write a general solution for a class of problems, as opposed
+to a specific solution to a single problem, you have written an {\bf
+algorithm}.  I mentioned this word in Chapter 1, but did not define it
+carefully.  It is not easy to define, so I will try a couple of
+approaches.
+
+First, consider something that is not an algorithm.
+When you learned to multiply single-digit numbers, you probably
+memorized the multiplication table.  In effect, you memorized 100
+specific solutions.  That kind of knowledge is not really algorithmic.
+
+But if you were ``lazy,'' you probably cheated by learning a few
+tricks.  For example, to find the product of $n$ and 9, you can write
+$n-1$ as the first digit and $10-n$ as the second digit.  This trick
+is a general solution for multiplying any single-digit number by 9.
+That's an algorithm!
+
+Similarly, the techniques you learned for addition with carrying,
+subtraction with borrowing, and long division are all algorithms.  One
+of the characteristics of algorithms is that they do not require any
+intelligence to carry out.  They are mechanical processes in which
+each step follows from the last according to a simple set of rules.
+
+In my opinion, it is embarrassing that humans spend so much time in
+school learning to execute algorithms that, quite literally, require
+no intelligence.
+
+On the other hand, the process of designing algorithms is interesting,
+intellectually challenging, and a central part of what we call
+programming.
+
+Some of the things that people do naturally, without difficulty
+or conscious thought, are the most difficult to express
+algorithmically.  Understanding natural language is a good
+example.  We all do it, but so far no one has been able to
+explain {\em how} we do it, at least not in the form of an
+algorithm.
+
+Later in this book, you will have the opportunity to design
+simple algorithms for a variety of problems.  If you take
+the next class in the Computer Science sequence, Data Structures,
+you will see some of the most interesting, clever, and
+useful algorithms computer science has produced.
+
+\section{Glossary}
+
+\begin{description}
+
+\item[instance:]  An example from a category.  My cat is an
+instance of the category ``feline things.''  Every object is
+an instance of some type.
+
+\item[instance variable:]  One of the named data items that make
+up an structure.  Each structure has its own copy of
+the instance variables for its type.
+
+\item[constant reference parameter:]  A parameter that is passed
+by reference but that cannot be modified.
+
+\item[pure function:]  A function whose result depends only on its
+parameters, and that has so effects other than returning
+a value.
+
+\item[functional programming style:]  A style of program design
+in which the majority of functions are pure.
+
+\item[modifier:]  A function that changes one or more of the objects
+it receives as parameters, and usually returns {\tt void}.
+
+\item[fill-in function:]  A function that takes an ``empty''
+object as a parameter and fills it its instance variables instead
+of generating a return value.
+
+\item[algorithm:]  A set of instructions for solving a class of
+problems by a mechanical, unintelligent process.
+
+\index{instance}
+\index{instance variable}
+\index{pure function}
+\index{functional programming}
+\index{modifier}
+\index{algorithm}
+
+\end{description}
+

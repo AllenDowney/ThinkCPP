@@ -28,22 +28,22 @@
 \index{type!vector}
 
 A {\bf vector} is a set of values where each value is identified by a
-number (called an index).  An {\tt apstring} is similar to a vector,
+number (called an index).  An {\tt string} is similar to a vector,
 since it is made up of an indexed set of characters.  The nice thing
 about vectors is that they can be made up of any type of element,
 including basic types like {\tt int}s and {\tt double}s, 
 and user-defined types like {\tt Point} and {\tt Time}.
 
-The vector type that appears on the AP exam is called {\tt apvector}.
+The {\tt vector} type is defined in the C++ Standard Template Library (STL).
 In order to use it, you have to include the header file {\tt
-apvector.h}; again, the details of how to do that depend on your
+vector}; again, the details of how to do that depend on your
 programming environment.
 
 You can create a vector the same way you create other variable types:
 
 \begin{verbatim}
-  apvector<int> count;
-  apvector<double> doubleVector;
+  vector<int> count;
+  vector<double> doubleVector;
 \end{verbatim}
 %
 The type that makes up the vector appears in angle brackets ({\tt <}
@@ -54,12 +54,12 @@ vectors that have no elements (their length is zero).  It is more
 common to specify the length of the vector in parentheses:
 
 \begin{verbatim}
-  apvector<int> count (4);
+  vector<int> count (4);
 \end{verbatim}
 %
 The syntax here is a little odd; it looks like a combination of a
 variable declarations and a function call.  In fact, that's exactly
-what it is.  The function we are invoking is an {\tt apvector}
+what it is.  The function we are invoking is an {\tt vector}
 constructor.  A {\bf constructor} is a special function that creates
 new objects and initializes their instance variables.  In this case,
 the constructor takes a single argument, which is the size of the new
@@ -80,12 +80,12 @@ indices used to identify each box.  When you allocate a new
 vector, the elements are not initialized.  They could contain
 any values.
 
-There is another constructor for {\tt apvector}s that takes
+There is another constructor for {\tt vector}s that takes
 two parameters; the second is a ``fill value,'' the
 value that will be assigned to each of the elements.
 
 \begin{verbatim}
-  apvector<int> count (4, 0);
+  vector<int> count (4, 0);
 \end{verbatim}
 %
 This statement creates a vector of four elements and initializes
@@ -154,23 +154,23 @@ like fava beans and a nice Chianti.
 \section{Copying vectors}
 \index{vector!copying}
 
-There is one more constructor for {\tt apvector}s, which is
-called a copy constructor because it takes one {\tt apvector}
+There is one more constructor for {\tt vector}s, which is
+called a copy constructor because it takes one {\tt vector}
 as an argument and creates a new vector that is the same size,
 with the same elements.
 
 \begin{verbatim}
-  apvector<int> copy (count);
+  vector<int> copy (count);
 \end{verbatim}
 %
 Although this syntax is legal, it is almost never used for
-{\tt apvector}s because there is a better alternative:
+{\tt vector}s because there is a better alternative:
 
 \begin{verbatim}
-  apvector<int> copy = count;
+  vector<int> copy = count;
 \end{verbatim}
 %
-The {\tt =} operator works on {\tt apvector}s in pretty much
+The {\tt =} operator works on {\tt vector}s in pretty much
 the way you would expect.
 
 \section{{\tt for} loops}
@@ -230,7 +230,7 @@ is equivalent to
 \index{vector!length}
 
 There are only a couple of functions you can invoke on an
-{\tt apvector}.  One of them is very useful, though: {\tt length}.
+{\tt vector}.  One of them is very useful, though: {\tt length}.
 Not surprisingly, it returns the length of the vector (the number
 of elements).
 
@@ -368,8 +368,8 @@ the vector.  It allocates a new vector of {\tt int}s,
 and fills it with random values between 0 and {\tt upperBound-1}.
 
 \begin{verbatim}
-apvector<int> randomVector (int n, int upperBound) {
-  apvector<int> vec (n);
+vector<int> randomVector (int n, int upperBound) {
+  vector<int> vec (n);
   for (int i = 0; i<vec.length(); i++) {
     vec[i] = random () % upperBound;
   }
@@ -377,20 +377,20 @@ apvector<int> randomVector (int n, int upperBound) {
 }
 \end{verbatim}
 %
-The return type is {\tt apvector<int>}, which means that
+The return type is {\tt vector<int>}, which means that
 this function returns a vector of integers.
 To test this function, it is convenient to have a function that
 outputs the contents of a vector.
 
 \begin{verbatim}
-void printVector (const apvector<int>& vec) {
+void printVector (const vector<int>& vec) {
   for (int i = 0; i<vec.length(); i++) {
     cout << vec[i] << " ";
   }
 }
 \end{verbatim}
 %
-Notice that it is legal to pass {\tt apvector}s by reference.
+Notice that it is legal to pass {\tt vector}s by reference.
 In fact it is quite common, since it makes it unnecessary to
 copy the vector.  Since {\tt printVector} does not modify the
 vector, we declare the parameter {\tt const}.
@@ -400,7 +400,7 @@ The following code generates a vector and outputs it:
 \begin{verbatim}
   int numValues = 20;
   int upperBound = 10;
-  apvector<int> vector = randomVector (numValues, upperBound);
+  vector<int> vector = randomVector (numValues, upperBound);
   printVector (vector);
 \end{verbatim}
 %
@@ -471,7 +471,7 @@ The parameters are the vector and the integer value we are looking
 for.  The return value is the number of times the value appears.
 
 \begin{verbatim}
-int howMany (const apvector<int>& vec, int value) {
+int howMany (const vector<int>& vec, int value) {
   int count = 0;
   for (int i=0; i< vec.length(); i++) {
     if (vec[i] == value) count++;
@@ -490,7 +490,7 @@ We can solve that problem with a loop:
 \begin{verbatim}
   int numValues = 20;
   int upperBound = 10;
-  apvector<int> vector = randomVector (numValues, upperBound);
+  vector<int> vector = randomVector (numValues, upperBound);
 
   cout << "value\thowMany";
 
@@ -564,8 +564,8 @@ Here's how:
 \begin{verbatim}
   int numValues = 100000;
   int upperBound = 10;
-  apvector<int> vector = randomVector (numValues, upperBound);
-  apvector<int> histogram (upperBound);
+  vector<int> vector = randomVector (numValues, upperBound);
+  vector<int> histogram (upperBound);
 
   for (int i = 0; i<upperBound; i++) {
     int count = howMany (vector, i);
@@ -599,7 +599,7 @@ value from the vector as an index into the histogram.  Here's
 what that looks like:
 
 \begin{verbatim}
-  apvector<int> histogram (upperBound, 0);
+  vector<int> histogram (upperBound, 0);
 
   for (int i = 0; i<numValues; i++) {
     int index = vector[i];

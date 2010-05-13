@@ -50,8 +50,8 @@ The type that makes up the vector appears in angle brackets ({\tt <}
 and {\tt >}).  The first line creates a vector of integers named {\tt
 count}; the second creates a vector of {\tt double}s.  Although these
 statements are legal, they are not very useful because they create
-vectors that have no elements (their length is zero).  It is more
-common to specify the length of the vector in parentheses:
+vectors that have no elements (their size is zero).  It is more
+common to specify the size of the vector in parentheses:
 
 \begin{verbatim}
   vector<int> count (4);
@@ -210,7 +210,8 @@ loop-related statements in one place, it is easier to read.
 For example:
 
 \begin{verbatim}
-  for (int i = 0; i < 4; i++) {
+  int i;
+  for (i = 0; i < 4; i++) {
     cout << count[i] << endl;
   }
 \end{verbatim}
@@ -225,13 +226,13 @@ is equivalent to
   }
 \end{verbatim}
 
-\section{Vector length}
-\index{length!vector}
-\index{vector!length}
+\section{Vector size}
+\index{size!vector}
+\index{vector!size}
 
-There are only a couple of functions you can invoke on an
-{\tt vector}.  One of them is very useful, though: {\tt length}.
-Not surprisingly, it returns the length of the vector (the number
+There are a few functions you can invoke on an
+{\tt vector}.  One of them is very useful, though: {\tt size()}.
+Not surprisingly, it returns the size of the vector (the number
 of elements).
 
 It is a good idea to use this value as the upper bound of a loop,
@@ -240,16 +241,56 @@ changes, you won't have to go through the program changing all the
 loops; they will work correctly for any size vector.
 
 \begin{verbatim}
-  for (int i = 0; i < count.length(); i++) {
+  int i;
+  for (i = 0; i < count.size(); i++) {
     cout << count[i] << endl;
   }
 \end{verbatim}
 %
 The last time the body of the loop gets executed, the value of {\tt i}
-is {\tt count.length() - 1}, which is the index of the last element.  When
-{\tt i} is equal to {\tt count.length()}, the condition fails and the body
+is {\tt count.size() - 1}, which is the index of the last element.  When
+{\tt i} is equal to {\tt count.size()}, the condition fails and the body
 is not executed, which is a good thing, since it would cause a
-run-time error.
+run-time error. One thing that we should notice here is that the
+size() function is called every time the loop is executed. Calling
+a function again and again reduces execution speed, so it would be better
+to store the size in some variable by calling the {\tt size()} function
+before the loop begins, and use this variable to check for the last element.
+You can try this program as an excercise.
+
+\section{Vector functions}
+\index{functions!vector}
+\index{vector!functions}
+
+The best feature of a vector is its resizeability A vector, once declared,
+can be resized from anywhere within the program. Suppose we have a situation
+where we input numbers from the user and store them in a vector till he
+inputs {\tt -1}, and then display them. In such a case, we do not know the size of the
+vector beforehand. So we need wish add new values to the end of
+a vector as the user inputs them. We can use then vector
+function {\tt push\_back()} for that purpose.
+
+\begin{verbatim}
+  #include<iostream>
+  #include<vector>
+  using namespace std;
+  int main()
+  {
+    vector<int> values;
+    int c,i,len;
+    cin>>c;
+    
+    while(c != -1) {
+      values.push_back(c);
+      cin >> c;
+    }
+    len=values.size();
+    for(i = 0; i < len; i++) {
+      cout << values[i] << endl;
+    }
+  }
+
+\end{verbatim}
 
 \section{Random numbers}
 \label{random}
@@ -370,7 +411,7 @@ and fills it with random values between 0 and {\tt upperBound-1}.
 \begin{verbatim}
 vector<int> randomVector (int n, int upperBound) {
   vector<int> vec (n);
-  for (int i = 0; i<vec.length(); i++) {
+  for (int i = 0; i<vec.size(); i++) {
     vec[i] = random () % upperBound;
   }
   return vec;
@@ -384,7 +425,7 @@ outputs the contents of a vector.
 
 \begin{verbatim}
 void printVector (const vector<int>& vec) {
-  for (int i = 0; i<vec.length(); i++) {
+  for (int i = 0; i<vec.size(); i++) {
     cout << vec[i] << " ";
   }
 }
@@ -473,7 +514,7 @@ for.  The return value is the number of times the value appears.
 \begin{verbatim}
 int howMany (const vector<int>& vec, int value) {
   int count = 0;
-  for (int i=0; i< vec.length(); i++) {
+  for (int i=0; i< vec.size(); i++) {
     if (vec[i] == value) count++;
   }
   return count;
@@ -556,7 +597,7 @@ What we need is a way to store 10 integers.  We could create
 typing, and it would be a real pain later if we decided to
 change the range of values.
 
-A better solution is to use a vector with length 10.  That
+A better solution is to use a vector with size 10.  That
 way we can create all ten storage locations at once and we
 can access them using indices, rather than ten different names.
 Here's how:

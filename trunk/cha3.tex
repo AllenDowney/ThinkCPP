@@ -224,7 +224,17 @@ using namespace std;
 %
 {\tt iostream} contains information about input and output
 (I/O) streams, including the object named {\tt cout}.
+C++ has a powerful feature called namespaces, that
+allow you to write your own implementation of {\tt cout}.
+But in most cases, we would need to use the standard implementation.
+To convey this to the compiler, we use the line
 
+\begin{verbatim}
+using namespace std;
+\end{verbatim}
+
+As a rule of the thumb, you should write {\tt using namespace std;} whenever
+you use {\tt iostream}.
 \index{header file}
 \index{cmath}
 \index{iostream}
@@ -236,6 +246,9 @@ of your program along with {\tt iostream}:
 \begin{verbatim}
 #include <cmath>
 \end{verbatim}
+
+Such header files have an initial `c' to signify that these
+header files have been derived from the {\bf C} language.
 
 \section {Composition}
 \label{composition}

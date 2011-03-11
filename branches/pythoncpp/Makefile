@@ -16,14 +16,14 @@ PDFFLAGS = -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress  \
 %.pdf: %.ps
 	ps2pdf $@
 
-all:	top.tex
-	latex top
-	makeindex top
-	latex top
-	dvips -Ppdf -o thinkCScpp.ps top
-	ps2pdf $(PDFFLAGS) thinkCScpp.ps
+all:	book.tex
+	latex book
+	makeindex book
+	latex book
+	dvips -Ppdf -o thinkCScpp.ps book
 
 distrib:
+	ps2pdf $(PDFFLAGS) thinkCScpp.ps
 	rm -rf dist
 	mkdir dist dist/tex dist/html
 	cp thinkCScpp.pdf thinkCScpp.ps dist

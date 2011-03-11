@@ -1,0 +1,618 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+\chapter{Strings and things}
+\label{strings}
+
+\section{Containers for strings}
+
+We have seen five types of values---booleans, characters, integers,
+floating-point numbers and strings---but only four types of
+variables---{\tt bool}, {\tt char}, {\tt int} and {\tt double}.  So
+far we have no way to store a string in a variable or perform
+operations on strings.
+
+In fact, there are several kinds of variables in C++ that
+can store strings.  One is a basic type that is part of the C++
+language, sometimes called ``a native C string.''  The syntax
+for C strings is a bit ugly, and using them requires some concepts
+we have not covered yet, so for the most part we are going to
+avoid them.
+
+The string type we are going to use is called {\tt string}, which is
+one of the classes that belong to the C++ Standard Library.\footnote{You might be wondering what I mean by {\bf class}.It will be a few
+more chapters before I can give a complete definition, but for now a
+class is a collection of functions that defines the operations we
+can perform on some type.  The {\tt string} class contains all
+the functions that apply to {\tt string}s.}
+
+Unfortunately, it is not possible to avoid C strings altogether.
+In a few places in this chapter I will warn you about some problems
+you might run into using {\tt string}s instead of C strings.
+
+\section{{\tt string} variables}
+
+You can create a variable with type {\tt string} in the usual
+ways:
+
+\begin{verbatim}
+  string first;
+  first = "Hello, ";
+  string second = "world.";
+\end{verbatim}
+%
+The first line creates an {\tt string} without giving it a value.
+The second line assigns it the string value {\tt "Hello."}
+The third line is a combined declaration and assignment, also
+called an initialization.
+
+Normally when string values like {\tt "Hello, "} or {\tt "world."}
+appear, they are treated as C strings.  In this case, when we assign
+them to an {\tt string} variable, they are converted automatically
+to {\tt string} values.
+
+We can output strings in the usual way:
+
+\begin{verbatim}
+  cout << first << second << endl;
+\end{verbatim}
+%
+
+In order to compile this code, you will have to include the
+header file for the {\tt string} class, and you will have
+to add the file {\tt string} to the list of files you
+want to compile.  The details of how to do this depend on your
+programming environment.
+
+Before proceeding, you should type in the program above and make
+sure you can compile and run it.
+
+\section{Extracting characters from a string}
+
+Strings are called ``strings'' because they are made up of a sequence,
+or string, of characters.  The first operation we are going to
+perform on a string is to extract one of the characters.  C++
+uses square brackets ({\tt [} and {\tt ]}) for this operation:
+
+\begin{verbatim}
+  string fruit = "banana";
+  char letter = fruit[1];
+  cout << letter << endl;
+\end{verbatim}
+%
+The expression {\tt fruit[1]} indicates that I want character number 1
+from the string named {\tt fruit}.  The result is stored in a {\tt
+char} named {\tt letter}.  When I output the value of {\tt letter}, I
+get a surprise:
+
+\begin{verbatim}
+a
+\end{verbatim}
+%
+{\tt a} is not the first letter of {\tt "banana"}.  Unless you are a
+computer scientist.  For perverse reasons, computer scientists always
+start counting from zero.  The 0th letter (``zeroeth'') of {\tt
+"banana"} is {\tt b}.  The 1th letter (``oneth'') is {\tt a} and the
+2th (``twoeth'') letter is {\tt n}.
+
+If you want the the zereoth letter of a string, you have to put
+zero in the square brackets:
+
+\begin{verbatim}
+  char letter = fruit[0];
+\end{verbatim}
+
+\section{Length}
+\index{string!length}
+\index{length!string}
+
+To find the length of a string (number of characters), we can
+use the {\tt length} function.  The syntax for calling this
+function is a little different from what we've seen before:
+
+\begin{verbatim}
+  int length;
+  length = fruit.length();
+\end{verbatim}
+%
+To describe this function call, we would say that we are {\bf
+invoking} the length function on the string named {\tt fruit}.  This
+vocabulary may seem strange, but we will see many more examples where
+we invoke a function on an object.  The syntax for function invocation
+is called ``dot notation,'' because the dot (period) separates the
+name of the object, {\tt fruit}, from the name of the function, {\tt
+length}.
+
+{\tt length} takes no arguments, as indicated by the empty parentheses
+{\tt ()}.  The return value is an integer, in this case 6.  Notice
+that it is legal to have a variable with the same name as a function.
+
+To find the last letter of a string, you might be tempted to
+try something like
+
+\begin{verbatim}
+  int length = fruit.length();
+  char last = fruit[length];       // WRONG!!
+\end{verbatim}
+%
+That won't work.  The reason is that there is no 6th letter
+in {\tt "banana"}.  Since we started counting at 0, the 6
+letters are numbered from 0 to 5.  To get the last character,
+you have to subtract 1 from {\tt length}.
+
+\begin{verbatim}
+  int length = fruit.length();
+  char last = fruit[length-1];
+\end{verbatim}
+
+\section{Traversal}
+\index{traverse}
+
+A common thing to do with a string is
+start at the beginning, select each character in turn, do
+something to it, and continue until the end.  This pattern
+of processing is called a {\bf traversal}.  A natural
+way to encode a traversal is with a {\tt while} statement:
+
+\begin{verbatim}
+  int index = 0;
+  while (index < fruit.length()) {
+    char letter = fruit[index];
+    cout << letter << endl;
+    index = index + 1;
+  }
+\end{verbatim}
+%
+This loop traverses the string and outputs each letter on
+a line by itself.  Notice that the condition is
+{\tt index < fruit.length()}, which means that when
+{\tt index} is equal to the length of the string, the
+condition is false and the body of the loop is not executed.
+The last character we access is the one with the
+index {\tt fruit.length()-1}.
+
+\index{loop variable}
+\index{variable!loop}
+\index{index}
+
+The name of the loop variable is {\tt index}.  An {\bf
+index} is a variable or value used to specify one member of an ordered
+set, in this case the set of characters in the string.  The index
+indicates (hence the name) which one you want.  The set has to be
+ordered so that each letter has an index and each index
+refers to a single character.
+
+As an exercise, write a function that takes an {\tt string}
+as an argument and that outputs the letters backwards, all on
+one line.
+
+\section{A run-time error}
+\index{error!run-time}
+\index{run-time error}
+
+Way back in Section~\ref{run-time} I talked about run-time errors,
+which are errors that don't appear until a program has started
+running.
+
+So far, you probably haven't seen many run-time errors, because we
+haven't been doing many things that can cause one.  Well, now we are.
+If you use the {\tt []} operator and you provide an index that is
+negative or greater than {\tt length-1}, you will get a run-time
+error and a message something like this:
+
+\begin{verbatim}
+index out of range: 6, string: banana
+\end{verbatim}
+%
+Try it in your development environment and see how it looks.
+
+\section{The {\tt find} function}
+\index{find}
+
+The {\tt string} class provides several other functions that you can
+invoke on strings.  The {\tt find} function is like the opposite the
+{\tt []} operator.  Instead of taking an index and extracting the
+character at that index, {\tt find} takes a character and finds the
+index where that character appears.
+
+\begin{verbatim}
+  string fruit = "banana";
+  int index = fruit.find('a');
+\end{verbatim}
+%
+This example finds the index of the letter {\tt 'a'} in the string.
+In this case, the letter appears three times, so it is not obvious
+what {\tt find} should do.  According to the documentation, it returns
+the index of the {\em first} appearance, so the result is 1.  If the
+given letter does not appear in the string, {\tt find} returns -1.
+
+In addition, there is a
+version of {\tt find} that takes another {\tt string} as
+an argument and that finds the index where the substring
+appears in the string.  For example,
+
+\begin{verbatim}
+  string fruit = "banana";
+  int index = fruit.find("nan");
+\end{verbatim}
+%
+This example returns the value 2.
+
+You should remember from Section~\ref{overloading} that there
+can be more than one function with the same name, as long as they
+take a different number of parameters or different types.  In
+this case, C++ knows which version of {\tt find} to invoke
+by looking at the type of the argument we provide.
+
+\section{Our own version of {\tt find}}
+
+If we are looking for a letter in an {\tt string}, we may
+not want to start at the beginning of the string.  One way
+to generalize the {\tt find} function is to write a version
+that takes an additional parameter---the index where we should
+start looking.  Here is an implementation of this function.
+
+\begin{verbatim}
+int find (string s, char c, int i)
+{
+  while (i<s.length()) {
+    if (s[i] == c) return i;
+    i = i + 1;
+  }
+  return -1;
+}
+\end{verbatim}
+%
+Instead of invoking this function on an {\tt string}, like
+the first version of {\tt find}, we have to pass the {\tt string}
+as the first argument.  The other arguments are the character
+we are looking for and the index where we should start.
+
+\section{Looping and counting}
+\label{loopcount}
+\index{traverse!counting}
+\index{loop!counting}
+
+The following program counts the
+number of times the letter {\tt 'a'} appears in a string:
+
+\begin{verbatim}
+  string fruit = "banana";
+  int length = fruit.length();
+  int count = 0;
+
+  int index = 0;
+  while (index < length) {
+    if (fruit[index] == 'a') {
+      count = count + 1;
+    }
+    index = index + 1;
+  }
+  cout << count << endl;
+\end{verbatim}
+%
+This program demonstrates a common idiom, called a {\bf counter}.  The
+variable {\tt count} is initialized to zero and then incremented each
+time we find an {\tt 'a'}.  (To {\bf increment} is to increase by one;
+it is the opposite of {\bf decrement}, and unrelated to {\bf
+excrement}, which is a noun.)  When we exit the loop, {\tt count}
+contains the result: the total number of a's.
+
+\index{counter}
+\index{increment}
+\index{decrement}
+
+As an exercise, encapsulate this code in a function named
+{\tt countLetters}, and generalize it so that it accepts the
+string and the letter as arguments.
+
+\index{encapsulation}
+\index{generalization}
+
+As a second exercise, rewrite this function so that instead
+of traversing the string, it uses the version of
+{\tt find} we wrote in the previous section.
+
+\section{Increment and decrement operators}
+\index{operator!increment}
+\index{operator!decrement}
+
+Incrementing and decrementing are such common operations that C++
+provides special operators for them.  The {\tt ++} operator adds one
+to the current value of an {\tt int}, {\tt char} or {\tt double}, and
+{\tt --} subtracts one.  Neither operator works on {\tt string}s,
+and neither {\em should} be used on {\tt bool}s.
+
+Technically, it is legal to increment a variable and use it
+in an expression at the same time.  For example, you might see
+something like:
+
+\begin{verbatim}
+  cout << i++ << endl;
+\end{verbatim}
+%
+Looking at this, it is not clear whether the increment will
+take effect before or after the value is displayed.  Because
+expressions like this tend to be confusing, I would discourage
+you from using them.  In fact, to discourage you even more,
+I'm not going to tell you what the result is.  If you really
+want to know, you can try it.
+
+Using the increment operators, we can rewrite the letter-counter:
+
+\begin{verbatim}
+  int index = 0;
+  while (index < length) {
+    if (fruit[index] == 'a') {
+      count++;
+    }
+    index++;
+  }
+\end{verbatim}
+%
+It is a common error to write something like
+
+\begin{verbatim}
+  index = index++;             // WRONG!!
+\end{verbatim}
+%
+Unfortunately, this is syntactically legal, so the compiler
+will not warn you.  The effect of this statement is to leave
+the value of {\tt index} unchanged.  This is often a difficult
+bug to track down.
+
+Remember, you can write {\tt index = index +1;}, or you
+can write {\tt index++;}, but you shouldn't mix them.
+
+\section{String concatenation}
+
+Interestingly, the {\tt +} operator can be used on strings;
+it performs string {\bf concatenation}.  To concatenate means to
+join the two operands end to end.  For example:
+
+\begin{verbatim}
+  string fruit = "banana";
+  string bakedGood = " nut bread";
+  string dessert = fruit + bakedGood;
+  cout << dessert << endl;
+\end{verbatim}
+%
+The output of this program is {\tt banana nut bread}.
+
+Unfortunately, the {\tt +} operator does not work on native
+C strings, so you cannot write something like
+
+\begin{verbatim}
+  string dessert = "banana" + " nut bread";
+\end{verbatim}
+%
+because both operands are C strings.  As long as one of the
+operands is an {\tt string}, though, C++ will automatically
+convert the other.
+
+It is also possible to concatenate a character onto the
+beginning or end of an {\tt string}.  In the following example, we
+will use concatenation and character arithmetic to output
+an abecedarian series.
+
+``Abecedarian'' refers to a series or list in which the elements
+appear in alphabetical order.  For example, in Robert McCloskey's book
+{\em Make Way for Ducklings}, the names of the ducklings are Jack,
+Kack, Lack, Mack, Nack, Ouack, Pack and Quack.  Here is a loop that
+outputs these names in order:
+
+\begin{verbatim}
+  string suffix = "ack";
+
+  char letter = 'J';
+  while (letter <= 'Q') {
+    cout << letter + suffix << endl;
+    letter++;
+  }
+\end{verbatim}
+%
+The output of this program is:
+
+\begin{verbatim}
+Jack
+Kack
+Lack
+Mack
+Nack
+Oack
+Pack
+Qack
+\end{verbatim}
+%
+Of course, that's not quite right because I've misspelled ``Ouack''
+and ``Quack.''  As an exercise, modify the program to correct
+this error.
+
+Again, be careful to use string concatenation only with {\tt string}s
+and not with native C strings.  Unfortunately, an expression like
+{\tt letter + "ack"} is syntactically legal in C++, although it
+produces a very strange result, at least in my development environment.
+
+\section{{\tt string}s are mutable}
+\index{class!string}
+\index{immutable}
+\index{string}
+
+You can change the letters in an {\tt string} one at a time
+using the {\tt []} operator on the left side of an assignment.
+For example,
+
+\begin{verbatim}
+  string greeting = "Hello, world!";
+  greeting[0] = 'J';
+  cout << greeting << endl;
+\end{verbatim}
+%
+produces the output {\tt Jello, world!}.
+
+
+\section{{\tt string}s are comparable}
+\label{incomparable}
+\index{class!string}
+\index{comparison!string}
+\index{string}
+
+All the comparison operators that work on {\tt int}s and
+{\tt double}s also work on {\tt strings}.  For example,
+if you want to know if two strings are equal:
+
+\begin{verbatim}
+  if (word == "banana") {
+    cout << "Yes, we have no bananas!" << endl;
+  }
+\end{verbatim}
+%
+The other comparison operations are useful for putting words
+in alphabetical order.
+
+\begin{verbatim}
+  if (word < "banana") {
+    cout << "Your word, " << word << ", comes before banana." << endl;
+  } else if (word > "banana") {
+    cout << "Your word, " << word << ", comes after banana." << endl;
+  } else {
+    cout << "Yes, we have no bananas!" << endl;
+  }
+\end{verbatim}
+%
+You should be aware, though, that the {\tt string} class does
+not handle upper and lower case letters the same way that people
+do.  All the upper case letters come before all the lower case
+letters.  As a result,
+
+\begin{verbatim}
+Your word, Zebra, comes before banana.
+\end{verbatim}
+%
+A common way to address this problem is to convert strings to a
+standard format, like all lower-case, before performing the
+comparison.  The next sections explains how.  I will not address the
+more difficult problem, which is making the program realize that
+zebras are not fruit.
+
+\section{Character classification}
+
+It is often useful to examine a character and test whether
+it is upper or lower case, or whether it is a character or
+a digit.  C++ provides a library of functions that perform
+this kind of character classification.  In order to use these
+functions, you have to include the header file {\tt ctype.h}.
+
+\begin{verbatim}
+  char letter = 'a';
+  if (isalpha(letter)) {
+    cout << "The character " << letter << " is a letter." << endl;
+  }
+\end{verbatim}
+%
+You might expect the return value from {\tt isalpha} to
+be a {\tt bool}, but for reasons I don't even want to think
+about, it is actually an integer that is
+0 if the argument is not a letter, and some non-zero value
+if it is.
+
+This oddity is not as inconvenient as it seems, because it is
+legal to use this kind of integer in a conditional, as shown
+in the example.  The value 0 is treated as {\tt false}, and
+all non-zero values are treated as {\tt true}.
+
+Technically, this sort of thing should not be allowed---integers are
+not the same thing as boolean values.  Nevertheless, the C++ habit of
+converting automatically between types can be useful.
+
+Other character classification functions include {\tt isdigit}, which
+identifies the digits 0 through 9, and {\tt isspace}, which identifies
+all kinds of ``white'' space, including spaces, tabs, newlines, and a
+few others.  There are also {\tt isupper} and {\tt islower}, which
+distinguish upper and lower case letters.
+
+Finally, there are two functions that convert letters from one
+case to the other, called {\tt toupper} and {\tt tolower}.  Both take
+a single character as a parameter and return a (possibly
+converted) character.
+
+\begin{verbatim}
+  char letter = 'a';
+  letter = toupper (letter);
+  cout << letter << endl;
+\end{verbatim}
+%
+The output of this code is {\tt A}.
+
+As an exercise, use the character classification and conversion
+library to write functions named {\tt stringToUpper} and
+{\tt stringToLower} that take a single {\tt string} as
+a parameter, and that modify the string by converting all the
+letters to upper or lower case.  The return type should be
+{\tt void}.
+
+\section{Other {\tt string} functions}
+
+This chapter does not cover all the {\tt string} functions.
+Two additional ones, {\tt c\_str} and {\tt substr}, are covered
+in Section~\ref{finput} and Section~\ref{parsing}.
+
+\section{Glossary}
+
+\begin{description}
+
+\item[object:] A collection of related data that comes with a set of
+functions that operate on it.  The objects we have used so far are the
+{\tt cout} object provided by the system, and {\tt string}s.
+
+\item[index:]  A variable or value used to select one of the
+members of an ordered set, like a character from a string.
+
+\item[traverse:]  To iterate through all the elements of a set
+performing a similar operation on each.
+
+\item[counter:]  A variable used to count something, usually
+initialized to zero and then incremented.
+
+\item[increment:]  Increase the value of a variable by one.
+The increment operator in C++ is {\tt ++}.  In fact, that's
+why C++ is called C++, because it is meant to be one better
+than C.
+
+\item[decrement:]  Decrease the value of a variable by one.
+The decrement operator in C++ is {\tt --}.
+
+\item[concatenate:] To join two operands end-to-end.
+
+\index{object}
+\index{index}
+\index{traverse}
+\index{counter}
+\index{increment}
+\index{decrement}
+\index{concatenate}
+
+\end{description}
+

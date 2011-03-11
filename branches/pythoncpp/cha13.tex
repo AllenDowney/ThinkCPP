@@ -1,0 +1,731 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+\chapter{Objects of Vectors}
+
+\section{Enumerated types}
+\index{type!enumerated}
+\index{enumerated type}
+\index{mapping}
+
+In the previous chapter I talked about mappings between
+real-world values like rank and suit, and internal representations
+like integers and strings.  Although we created a mapping between
+ranks and integers, and between suits and integers, I pointed
+out that the mapping itself does not appear as part of the
+program.
+
+Actually, C++ provides a feature called and {\bf enumerated type}
+that makes it possible to (1) include a mapping as part of the
+program, and (2) define the set of values that make up the
+mapping.  For example, here is the definition
+of the enumerated types {\tt Suit} and {\tt Rank}:
+
+\begin{verbatim}
+enum Suit { CLUBS, DIAMONDS, HEARTS, SPADES };
+
+enum Rank { ACE=1, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE,
+TEN, JACK, QUEEN, KING };
+\end{verbatim}
+%
+By default, the first value in the enumerated type maps to
+0, the second to 1, and so on.  Within the {\tt Suit} type, the value
+{\tt CLUBS} is represented by the integer 0, {\tt DIAMONDS} is
+represented by 1, etc.
+
+The definition of {\tt Rank} overrides the default mapping and
+specifies that {\tt ACE} should be represented by the integer 1.
+The other values follow in the usual way.
+
+Once we have defined these types, we can use them anywhere.  For
+example, the instance variables {\tt rank} and {\tt suit} are
+can be declared with type {\tt Rank} and {\tt Suit}:
+
+\begin{verbatim}
+struct Card
+{
+  Rank rank;
+  Suit suit;
+
+  Card (Suit s, Rank r);
+};
+\end{verbatim}
+%
+That the types of the parameters for the constructor
+have changed, too.  Now, to create a card, we can use the values from
+the enumerated type as arguments:
+
+\begin{verbatim}
+  Card card (DIAMONDS, JACK);
+\end{verbatim}
+%
+By convention, the values in enumerated types have names with
+all capital letters. \index{convention}
+This code is much clearer than the alternative using integers:
+
+\begin{verbatim}
+  Card card (1, 11);
+\end{verbatim}
+%
+Because we know that the values in the enumerated types are
+represented as integers, we can use them as indices for a vector.
+Therefore the old {\tt print} function will work without
+modification.  We have to make some changes in {\tt buildDeck},
+though:
+
+\begin{verbatim}
+  int index = 0;
+  for (Suit suit = CLUBS; suit <= SPADES; suit = Suit(suit+1)) {
+    for (Rank rank = ACE; rank <= KING; rank = Rank(rank+1)) {
+      deck[index].suit = suit;
+      deck[index].rank = rank;
+      index++;
+    }
+  }
+\end{verbatim}
+%
+In some ways, using enumerated types makes this code more readable,
+but there is one complication.  Strictly speaking, we are not
+allowed to do arithmetic with enumerated types, so {\tt suit++}
+is not legal.  On the other hand, in the expression {\tt suit+1},
+C++ automatically converts the enumerated type to integer.  Then
+we can take the result and typecast it back to the enumerated type:
+
+\begin{verbatim}
+  suit = Suit(suit+1);
+  rank = Rank(rank+1);
+\end{verbatim}
+%
+Actually, there is a better way to do this---we can define
+the {\tt ++} operator for enumerated types---but that is beyond
+the scope of this book.
+
+\section{{\tt switch} statement}
+\index{switch statement}
+\index{statement!switch}
+
+It's hard to mention enumerated types without mentioning {\tt switch}
+statements, because they often go hand in hand.  A {\tt switch} statement
+is an alternative to a chained conditional that is syntactically
+prettier and often more efficient.  It looks like this:
+
+\begin{verbatim}
+  switch (symbol) {
+  case '+':
+    perform_addition ();
+    break;
+  case '*':
+    perform_multiplication ();
+    break;
+  default:
+    cout << "I only know how to perform addition and multiplication" << endl;
+    break;
+  }
+\end{verbatim}
+%
+This {\tt switch} statement is equivalent to the following chained
+conditional:
+
+\begin{verbatim}
+  if (symbol == '+') {
+    perform_addition ();
+  } else if (symbol == '*') {
+    perform_multiplication ();
+  } else {
+    cout << "I only know how to perform addition and multiplication" << endl;
+  }
+\end{verbatim}
+%
+The {\tt break} statements are necessary in each branch
+in a {\tt switch} statement because otherwise the flow of execution
+``falls through'' to the next case.  Without the {\tt break} statements,
+the symbol {\tt +} would make the program perform addition, and
+then perform multiplication, and then print the error message.
+Occasionally this feature is useful, but most of the time it is
+a source of errors when people forget the {\tt break} statements.
+
+\index{break statement}
+\index{statement!break}
+
+{\tt switch} statements work with integers, characters, and enumerated
+\mbox{types}.  For example, to convert a {\tt Suit} to the corresponding
+string, we could use something like:
+
+\begin{verbatim}
+  switch (suit) {
+  case CLUBS:     return "Clubs";
+  case DIAMONDS:  return "Diamonds";
+  case HEARTS:    return "Hearts";
+  case SPADES:    return "Spades";
+  default:        return "Not a valid suit";
+  }
+\end{verbatim}
+%
+In this case we don't need {\tt break} statements because the
+{\tt return} statements cause the flow of execution to return to
+the caller instead of falling through to the next case.
+
+\index{default}
+
+In general it is good style to include a {\tt default} case in
+every {\tt switch} statement, to handle errors or unexpected values.
+
+\section{Decks}
+\label{deck}
+\index{deck}
+\index{vector!of Cards}
+
+In the previous chapter, we worked with a vector of objects,
+but I also mentioned that it is possible to have an object
+that contains a vector as an instance variable.  In this
+chapter I am going to create a new object, called a {\tt Deck},
+that contains a vector of {\tt Card}s.
+
+\index{instance variable}
+\index{variable!instance}
+
+The structure definition looks like this
+
+\begin{verbatim}
+struct Deck {
+  apvector<Card> cards;
+
+  Deck (int n);
+};
+
+Deck::Deck (int size)
+{
+  apvector<Card> temp (size);
+  cards = temp;
+}
+\end{verbatim}
+%
+The name of the instance variable is {\tt cards} to help
+distinguish the {\tt Deck} object from the vector of {\tt Card}s
+that it contains.
+
+\index{constructor}
+
+For now there is only one constructor.  It creates a local variable
+named {\tt temp}, which it initializes by invoking the constructor
+for the {\tt apvector} class, passing the size as a parameter.
+Then it copies the vector from {\tt temp} into the instance
+variable {\tt cards}.
+
+Now we can create a deck of cards like this:
+
+\begin{verbatim}
+  Deck deck (52);
+\end{verbatim}
+%
+Here is a state diagram showing what a
+{\tt Deck} object looks like:
+
+\index{state diagram}
+\index{constructor}
+
+\vspace {0.1in}
+\centerline{\epsfig{figure=deckobject.eps}}
+\vspace {0.1in}
+
+The object named {\tt deck} has a single instance variable named {\tt
+cards}, which is a vector of {\tt Card} objects.  To access the cards
+in a deck we have to compose the syntax for accessing an
+instance variable and the syntax for selecting an element from an
+array.  For example, the expression {\tt deck.cards[i]} is the ith
+card in the deck, and {\tt deck.cards[i].suit} is its suit.
+The following loop
+
+\begin{verbatim}
+  for (int i = 0; i<52; i++) {
+    deck.cards[i].print();
+  }
+\end{verbatim}
+%
+demonstrates how to traverse the deck and output each card.
+
+\section {Another constructor}
+\index{constructor}
+
+Now that we have a {\tt Deck} object, it would be useful
+to initialize the cards in it.  From the previous chapter we
+have a function called {\tt buildDeck} that we could use
+(with a few adaptations), but it might be more natural to
+write a second {\tt Deck} constructor.
+
+\index{loop!nested}
+
+\begin{verbatim}
+Deck::Deck ()
+{
+  apvector<Card> temp (52);
+  cards = temp;
+
+  int i = 0;
+  for (Suit suit = CLUBS; suit <= SPADES; suit = Suit(suit+1)) {
+    for (Rank rank = ACE; rank <= KING; rank = Rank(rank+1)) {
+      cards[i].suit = suit;
+      cards[i].rank = rank;
+      i++;
+    }
+  }
+}
+\end{verbatim}
+%
+Notice how similar this function is to {\tt buildDeck}, except
+that we had to change the syntax to make it a constructor.
+Now we can create a standard 52-card deck with the simple
+declaration {\tt Deck deck;}
+
+\section {{\tt Deck} member functions}
+\index{member function}
+\index{function!member}
+
+Now that we have a {\tt Deck} object, it makes sense to put
+all the functions that pertain to {\tt Deck}s in the {\tt Deck}
+structure definition.  Looking at the functions we have written so
+far, one obvious candidate is {\tt printDeck} (Section~\ref{printdeck}).
+Here's how it looks, rewritten as a {\tt Deck} member function:
+
+\index{printDeck}
+
+\begin{verbatim}
+void Deck::print () const {
+  for (int i = 0; i < cards.length(); i++) {
+    cards[i].print ();
+  }
+}
+\end{verbatim}
+%
+As usual, we can refer to the instance variables of the current
+object without using dot notation.
+
+For some of the other functions, it is not obvious whether they should
+be member functions of {\tt Card}, member functions of {\tt Deck}, or
+nonmember functions that take {\tt Card}s and {\tt Deck}s as parameters.
+For example, the version of {\tt find} in the previous chapter
+takes a {\tt Card} and a {\tt Deck} as arguments, but you could
+reasonably make it a member function of either type.  As an exercise,
+rewrite {\tt find} as a {\tt Deck} member function that takes
+a {\tt Card} as a parameter.
+
+Writing {\tt find} as a {\tt Card} member
+function is a little tricky.  Here's my version:
+
+\begin{verbatim}
+int Card::find (const Deck& deck) const {
+  for (int i = 0; i < deck.cards.length(); i++) {
+    if (equals (deck.cards[i], *this)) return i;
+  }
+  return -1;
+}
+\end{verbatim}
+%
+The first trick is that we have to use the keyword {\tt this}
+to refer to the {\tt Card} the function is invoked on.
+
+\index{structure definition}
+
+The second trick is that C++ does not make it easy to write
+structure definitions that refer to each other.  The problem
+is that when the compiler is reading the first structure
+definition, it doesn't know about the second one yet.
+
+One solution is to declare {\tt Deck} before {\tt Card} and
+then define {\tt Deck} afterwards:
+
+\begin{verbatim}
+// declare that Deck is a structure, without defining it
+struct Deck;
+
+// that way we can refer to it in the definition of Card
+struct Card
+{
+  int suit, rank;
+
+  Card ();
+  Card (int s, int r);
+
+  void print () const;
+  bool isGreater (const Card& c2) const;
+  int find (const Deck& deck) const;
+};
+
+// and then later we provide the definition of Deck
+struct Deck {
+  apvector<Card> cards;
+
+  Deck ();
+  Deck (int n);
+  void print () const;
+  int find (const Card& card) const;
+};
+\end{verbatim}
+
+
+\section{Shuffling}
+\label{shuffle}
+\index{shuffling}
+
+For most card games you need to be able to shuffle the deck;
+that is, put the cards in a random order.  In Section~\ref{random}
+we saw how to generate random numbers, but it is not obvious how
+to use them to shuffle a deck.
+
+One possibility is to model the way humans shuffle, which is usually
+by dividing the deck in two and then reassembling the deck by choosing
+alternately from each deck.  Since humans usually don't shuffle
+perfectly, after about 7 iterations the order of the deck is pretty
+well randomized.  But a computer program would have the annoying
+property of doing a perfect shuffle every time, which is not really
+very random.  In fact, after 8 perfect shuffles, you would find the
+deck back in the same order you started in.  For a discussion of that
+claim, see {\tt http://www.wiskit.com/marilyn/craig.html} or do a web
+search with the keywords ``perfect shuffle.''
+
+A better shuffling algorithm is to traverse the deck one card at a
+time, and at each iteration choose two cards and swap them.
+
+\index{pseudocode}
+
+Here is an outline of how this algorithm works.  To sketch the
+program, I am using a combination of C++ statements and English
+words that is sometimes called {\bf pseudocode}:
+
+\begin{verbatim}
+  for (int i=0; i<cards.length(); i++) {
+    // choose a random number between i and cards.length()
+    // swap the ith card and the randomly-chosen card
+  }
+\end{verbatim}
+%
+The nice thing about using pseudocode is that it often makes it
+clear what functions you are going to need.  In this case, we
+need something like {\tt randomInt}, which chooses a random
+integer between the parameters {\tt low} and {\tt high},
+and {\tt swapCards} which takes two indices and switches the
+cards at the indicated positions.
+
+\index{random number}
+
+You can probably figure out how to write {\tt randomInt}
+by looking at Section~\ref{random}, although you will have to
+be careful about possibly generating indices that are out of range.
+
+\index{swapCards}
+\index{reference}
+
+You can also figure out {\tt swapCards} yourself.
+I will leave the remaining implementation of these functions
+as an exercise to the reader.
+
+\section{Sorting}
+\label{sorting}
+\index{sorting}
+
+Now that we have messed up the deck, we need a way to put it
+back in order.  Ironically, there is an algorithm for
+sorting that is very similar to the algorithm for shuffling.
+
+Again, we are going to traverse the deck and at each location
+choose another card and swap.  The only difference is that
+this time instead of choosing the other card at random, we
+are going to find the lowest card remaining in the deck.
+
+By ``remaining in the deck,'' I mean cards that are at or
+to the right of the index {\tt i}.
+
+\begin{verbatim}
+  for (int i=0; i<cards.length(); i++) {
+    // find the lowest card at or to the right of i
+    // swap the ith card and the lowest card
+  }
+\end{verbatim}
+%
+Again, the pseudocode helps with the design of the {\bf helper
+functions}.  In this case we can use {\tt swapCards} again,
+so we only need one new one, called {\tt findLowestCard},
+that takes a vector of cards and an index where it should
+start looking.
+
+This process, using pseudocode to figure out what helper
+functions are needed, is sometimes called {\bf top-down
+design}, in contrast to the bottom-up design I discussed
+in Section~\ref{counting}.
+
+\index{top-down design}
+\index{program development!top-down}
+\index{bottom-up design}
+\index{program development!bottom-up}
+\index{helper function}
+\index{function!helper}
+
+Once again, I am going to leave the implementation up to
+the reader.
+
+\section {Subdecks}
+\index{subdeck}
+
+How should we represent a hand or some other subset of a full deck?
+One easy choice is to make a {\tt Deck} object that
+has fewer than 52 cards.
+
+We might want a function, {\tt subdeck}, that takes a vector of cards
+and a range of indices, and that returns a new vector of cards that
+contains the specified subset of the deck:
+
+\begin{verbatim}
+Deck Deck::subdeck (int low, int high) const {
+  Deck sub (high-low+1);
+	
+  for (int i = 0; i<sub.cards.length(); i++) {
+    sub.cards[i] = cards[low+i];
+  }
+  return sub;
+}
+\end{verbatim}
+%
+To create the local variable named {\tt subdeck} we are using
+the {\tt Deck} constructor that takes the size of the deck
+as an argument and that does not initialize the cards.  The
+cards get initialized when they are copied from the original
+deck.
+
+The length of the subdeck is {\tt high-low+1} because both the low
+card and high card are included.  This sort of computation can be
+confusing, and lead to ``off-by-one'' errors.  Drawing a picture is
+usually the best way to avoid them.
+
+\index{constructor}
+\index{overloading}
+
+As an exercise, write a version of {\tt findBisect} that takes a
+subdeck as an argument, rather than a deck and an index range.  Which
+version is more error-prone?  Which version do you think is more
+efficient?
+
+\section{Shuffling and dealing}
+\index{shuffling}
+\index{dealing}
+
+In Section~\ref{shuffle} I wrote pseudocode for a shuffling algorithm.
+Assuming that we have a function called {\tt shuffleDeck} that takes
+a deck as an argument and shuffles it, we can create and shuffle
+a deck:
+
+\begin{verbatim}
+  Deck deck;               // create a standard 52-card deck
+  deck.shuffle ();         // shuffle it
+\end{verbatim}
+%
+Then, to deal out several hands, we can use {\tt subdeck}:
+
+\begin{verbatim}
+  Deck hand1 = deck.subdeck (0, 4);
+  Deck hand2 = deck.subdeck (5, 9);
+  Deck pack = deck.subdeck (10, 51);
+\end{verbatim}
+%
+This code puts the first 5 cards in one hand, the next 5 cards
+in the other, and the rest into the pack.
+
+When you thought about dealing, did you think we should give out one
+card at a time to each player in the round-robin style that is common
+in real card games?  I thought about it, but then realized that it is
+unnecessary for a computer program.  The round-robin convention is
+intended to mitigate imperfect shuffling and make it more difficult
+for the dealer to cheat.  Neither of these is an issue for a computer.
+
+This example is a useful reminder of one of the dangers of engineering
+metaphors: sometimes we impose restrictions on computers that are
+unnecessary, or expect capabilities that are lacking, because we
+unthinkingly extend a metaphor past its breaking point.  Beware of
+misleading analogies.
+
+
+\section {Mergesort}
+\index{efficiency}
+\index{sorting}
+\index{mergesort}
+
+In Section~\ref{sorting}, we saw a simple sorting algorithm that turns
+out not to be very efficient.  In order to sort $n$ items, it has to
+traverse the vector $n$ times, and each traversal takes an amount of
+time that is proportional to $n$.  The total time, therefore, is
+proportional to $n^2$.
+
+In this section I will sketch a more efficient algorithm called {\bf
+mergesort}.  To sort $n$ items, mergesort takes time proportional to
+$n \log n$.  That may not seem impressive, but as $n$ gets big, the
+difference between $n^2$ and $n \log n$ can be enormous.  Try out a
+few values of $n$ and see.
+
+The basic idea behind mergesort is this: if you have two subdecks,
+each of which has been sorted, it is easy (and fast) to merge them
+into a single, sorted deck.  Try this out with a deck of cards:
+
+\begin{enumerate}
+
+\item Form two subdecks with about 10 cards each and sort
+them so that when they are face up the lowest cards are on
+top.  Place both decks face up in front of you.
+
+\item Compare the top card from each deck and choose the
+lower one.  Flip it over and add it to the merged deck.
+
+\item Repeat step two until one of the decks is empty.
+Then take the remaining cards and add them to the merged
+deck.
+
+\end{enumerate}
+
+The result should be a single sorted deck.  Here's what this
+looks like in pseudocode:
+
+\begin{verbatim}
+  Deck merge (const Deck& d1, const Deck& d2) {
+    // create a new deck big enough for all the cards
+    Deck result (d1.cards.length() + d2.cards.length());
+
+    // use the index i to keep track of where we are in
+    // the first deck, and the index j for the second deck
+    int i = 0;
+    int j = 0;
+		
+    // the index k traverses the result deck
+    for (int k = 0; k<result.cards.length(); k++) {
+			
+      // if d1 is empty, d2 wins; if d2 is empty, d1 wins;
+      // otherwise, compare the two cards
+			
+      // add the winner to the new deck
+    }
+    return result;
+  }
+\end{verbatim}
+%
+I chose to make {\tt merge} a nonmember function because
+the two arguments are symmetric.
+
+The best way to test {\tt merge} is to build and shuffle a deck,
+use subdeck to form two (small) hands, and then use the sort
+routine from the previous chapter to sort the two halves.  Then
+you can pass the two halves to {\tt merge} to see if it works.
+
+\index{testing}
+
+If you can get that working, try a simple implementation of
+{\tt mergeSort}:
+
+\begin{verbatim}
+Deck Deck::mergeSort () const {
+  // find the midpoint of the deck
+  // divide the deck into two subdecks
+  // sort the subdecks using sort
+  // merge the two halves and return the result
+}
+\end{verbatim}
+%
+Notice that the current object is declared {\tt const} because
+{\tt mergeSort} does not modify it.  Instead, it creates and
+returns a new {\tt Deck} object.
+
+If you get that version working, the real fun begins!  The magical thing
+about mergesort is that it is recursive.  At the point where you sort
+the subdecks, why should you invoke the old, slow version of {\tt
+sort}?  Why not invoke the spiffy new {\tt mergeSort} you are in the
+process of writing?
+
+\index{recursion}
+
+Not only is that a good idea, it is {\em necessary} in order to
+achieve the performance advantage I promised.  In order to make it
+work, though, you have to add a base case so that it doesn't recurse
+forever.  A simple base case is a subdeck with 0 or 1 cards.  If {\tt
+mergesort} receives such a small subdeck, it can return it
+unmodified, since it is already sorted.
+
+The recursive version of {\tt mergesort} should look something
+like this:
+
+\begin{verbatim}
+Deck Deck::mergeSort (Deck deck) const {
+  // if the deck is 0 or 1 cards, return it
+
+  // find the midpoint of the deck
+  // divide the deck into two subdecks
+  // sort the subdecks using mergesort
+  // merge the two halves and return the result
+}
+\end{verbatim}
+%
+As usual, there are two ways to think about recursive programs:
+you can think through the entire flow of execution, or you
+can make the ``leap of faith.''  I have deliberately constructed
+this example to encourage you to make the leap of faith.
+
+\index{leap of faith}
+
+When you were using {\tt sort} to sort the subdecks, you didn't
+feel compelled to follow the flow of execution, right?  You just
+assumed that the {\tt sort} function would work because you already
+debugged it.  Well, all you did to make {\tt mergeSort} recursive was
+replace one sort algorithm with another.  There is no reason to read
+the program differently.
+
+Well, actually you have to give some thought to getting the
+base case right and making sure that you reach it eventually,
+but other than that, writing the recursive version should be
+no problem.  Good luck!
+
+\section{Glossary}
+
+\begin{description}
+
+\item[pseudocode:]  A way of designing programs by writing
+rough drafts in a combination of English and C++.
+
+\item[helper function:]  Often a small function that does not
+do anything enormously useful by itself, but which helps
+another, more useful, function.
+
+\item[bottom-up design:]  A method of program development that
+uses pseudocode to sketch solutions to large problems and
+design the interfaces of helper functions.
+
+\item[mergesort:]  An algorithm for sorting a collection of
+values.  Mergesort is faster than the simple algorithm in
+the previous chapter, especially for large collections.
+
+\index{pseudocode}
+\index{helper function}
+\index{bottom-up design}
+\index{program development!bottom-up}
+\index{function!helper}
+\index{mergesort}
+
+
+\end{description}
+

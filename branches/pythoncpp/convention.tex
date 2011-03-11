@@ -1,0 +1,47 @@
+\section{Convention and divine law}
+\index{convention}
+\index{divine law}
+
+In the last few sections, I used the phrase ``by convention''
+several times to indicate design decisions that are arbitrary
+in the sense that there are no significant reasons to do things
+one way or another, but dictated by convention.
+
+In these cases, it is to your advantage to be familiar with
+convention and use it, since it will make your programs easier
+for others to understand.  At the same time, it is important to
+distinguish between (at least) three kinds of rules:
+
+\begin{description}
+
+\item[Divine law:]  This is my phrase to indicate a rule that
+is true because of some underlying principle of logic or
+mathematics, and that is true in any programming language
+(or other formal system).  For example, there is no way to
+specify the location and size of a bounding box using fewer
+than four pieces of information.  Another example is that adding
+integers is commutative.  That's part of the definition of
+addition and has nothing to do with C++.
+
+\item[Rules of C++:]  These are the syntactic and semantic
+rules of C++ that you cannot violate, because the
+resulting program will not compile or run.  Some are arbitrary;
+for example, the fact that the {\tt +} symbol represents
+addition {\em and} string concatenation.  Others reflect
+underlying limitations of the compilation or execution process.
+For example, you have to specify the types of parameters, but
+not arguments.
+
+\item[Style and convention:]  There are a lot of rules that
+are not enforced by the compiler, but that are essential for
+writing programs that are correct, that you can debug and
+modify, and that others can read.  Examples include indentation
+and the placement of squiggly braces, as well as conventions
+for naming variables, functions and classes.
+
+\end{description}
+
+As we go along, I will try to indicate which category various things
+fall into, but you might want to give it some thought from time to
+time.
+

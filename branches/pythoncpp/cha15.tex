@@ -1,0 +1,845 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+\chapter{File Input/Output and {\tt apmatrix}es}
+
+In this chapter we will develop a program that reads and writes files,
+parses input, and demonstrates the {\tt apmatrix} class.  We will also
+implement a data structure called {\tt Set} that expands automatically
+as you add elements.
+
+Aside from demonstrating all these features, the real purpose of the
+program is to generate a two-dimensional table of
+the distances between cities in the United States.
+The output is a table that looks like this:
+
+\begin{verbatim}
+Atlanta 0
+Chicago 700     0
+Boston  1100    1000    0
+Dallas  800     900     1750    0
+Denver  1450    1000    2000    800     0
+Detroit 750     300     800     1150    1300    0
+Orlando 400     1150    1300    1100    1900    1200    0
+Phoenix 1850    1750    2650    1000    800     2000    2100    0
+Seattle 2650    2000    3000    2150    1350    2300    3100    1450    0
+        Atlanta Chicago Boston  Dallas  Denver  Detroit Orlando Phoenix Seattle
+\end{verbatim}
+%
+The diagonal elements are all zero because that is the distance
+from a city to itself.  Also, because
+the distance from A to B is the same as the distance from B
+to A, there is no need to print the top half of the matrix.
+
+\section {Streams}
+\index{stream}
+
+To get input from a file or send output to a file, you have to
+create an {\tt ifstream} object (for input files) or an
+{\tt ofstream} object (for output files).  These objects
+are defined in the header file {\tt fstream}, which you
+have to include.
+
+\index{header file}
+
+A {\bf stream} is an abstract object that represents the flow
+of data from a source like the keyboard or a file to a destination
+like the screen or a file.
+
+We have already worked with two streams: {\tt cin}, which has type
+{\tt istream}, and {\tt cout}, which has type {\tt ostream}.
+{\tt cin} represents the flow of data from the keyboard to
+the program.  Each time the program uses the {\tt >>} operator
+or the {\tt getline} function, it removes a piece of data
+from the input stream.
+
+\index{cin}
+\index{cout}
+\index{istream}
+\index{ostream}
+
+Similarly, when the program uses the {\tt <<} operator on
+an {\tt ostream}, it adds a datum to the outgoing stream.
+
+\section {File input}
+\label{finput}
+\index{file!input}
+\index{ifstream}
+
+To get data from a file, we have to create a stream that flows
+from the file into the program.  
+We can do that using the {\tt ifstream} constructor.
+
+\begin{verbatim}
+  ifstream infile ("file-name");
+\end{verbatim}
+%
+The argument for this constructor is a string that
+contains the name of the file you want to open.  The result
+is an object named {\tt infile} that supports all the same
+operations as {\tt cin}, including {\tt >>} and {\tt getline}.
+
+\begin{verbatim}
+  int x;
+  apstring line;
+    
+  infile >> x;               // get a single integer and store in x
+  getline (infile, line);    // get a whole line and store in line
+\end{verbatim}
+%
+If we know ahead of time how much data is in a file, it is 
+straightforward to write a loop that reads the entire file and
+then stops.  More often, though, we want to read the entire
+file, but don't know how big it is.
+
+There are member functions for {\tt ifstreams} that check the status
+of the input stream; they are called {\tt good}, {\tt eof}, {\tt fail}
+and {\tt bad}.  We will use {\tt good} to make sure the file was
+opened successfully and {\tt eof} to detect the ``end of file.''
+
+\index{stream!status}
+\index{good}
+\index{eof}
+\index{end of file}
+
+Whenever you get data from an input stream, you don't
+know whether the attempt succeeded until you check.  If the
+return value from {\tt eof} is {\tt true} then we have reached
+the end of the file and we know that the last attempt failed.
+Here is a program that reads lines from a file and displays
+them on the screen:
+
+\begin{verbatim}
+  apstring fileName = ...;
+  ifstream infile (fileName.c_str());
+
+  if (infile.good() == false) {
+    cout << "Unable to open the file named " << fileName;
+    exit (1);
+  }
+
+  while (true) {
+    getline (infile, line);
+    if (infile.eof()) break;
+    cout << line << endl;
+  }
+\end{verbatim}
+%
+The function {\tt c\_str} converts an {\tt apstring} to a
+native C string.  Because the {\tt ifstream} constructor
+expects a C string as an argument, we have to convert
+the {\tt apstring}.
+
+\index{c\_str}
+\index{C string}
+\index{string!native C}
+
+Immediately after opening the file, we invoke the {\tt good} function.
+The return value is {\tt false} if the system could not open the file,
+most likely because it does not exist, or you do not have permission
+to read it.
+
+\index{loop!infinite}
+\index{infinite loop}
+
+The statement {\tt while(true)} is an idiom for an infinite
+loop.  Usually there will be a {\tt break} statement somewhere in
+the loop so that the program does not really run forever (although
+some programs do).  In this case, the {\tt break} statement allows
+us to exit the loop as soon as we detect the end of file.
+
+\index{break statement}
+\index{statement!break}
+\index{getline}
+
+It is important to exit the loop between the input statement and
+the output statement, so that when {\tt getline} fails at the
+end of the file, we do not output the invalid data in {\tt line}.
+
+\section{File output}
+\index{file output}
+\index{ofstream}
+
+Sending output to a file is similar.  For example, we could
+modify the previous program to copy lines from one file to
+another.
+
+\begin{verbatim}
+  ifstream infile ("input-file");
+  ofstream outfile ("output-file");
+
+  if (infile.good() == false || outfile.good() == false) {
+    cout << "Unable to open one of the files." << endl;
+    exit (1);
+  }
+
+  while (true) {
+    getline (infile, line);
+    if (infile.eof()) break;
+    outfile << line << endl;
+  }
+\end{verbatim}
+
+\section{Parsing input}
+\label{parsing}
+\index{parsing}
+
+In Section~\ref{formal} I defined ``parsing'' as the process of
+analyzing the structure of a sentence in a natural language or a
+statement in a formal language.  For example, the compiler has to
+parse your program before it can translate it into machine language.
+
+In addition, when you read input from a file or from the keyboard
+you often have to parse it in order to extract the information
+you want and detect errors.
+
+For example, I have a file called {\tt distances} that contains
+information about the distances between major cities in the
+United States.  I got this information from a randomly-chosen
+web page
+
+\begin{verbatim}
+http://www.jaring.my/usiskl/usa/distance.html
+\end{verbatim}
+%
+so it may be wildly inaccurate, but that doesn't matter.  The
+format of the file looks like this:
+
+\begin{verbatim}
+"Atlanta"       "Chicago"       700
+"Atlanta"       "Boston"        1,100
+"Atlanta"       "Chicago"       700
+"Atlanta"       "Dallas"        800
+"Atlanta"       "Denver"        1,450
+"Atlanta"       "Detroit"       750
+"Atlanta"       "Orlando"       400
+\end{verbatim}
+%
+Each line of the file contains the names of two cities in quotation
+marks and the distance between them in miles.  The quotation marks
+are useful because they make it easy to deal with names that have
+more than one word, like ``San Francisco.''
+
+By searching for the quotation marks in a line of input, we
+can find the beginning and end of each city name.
+Searching for special characters like quotation marks can be a little
+awkward, though, because the quotation mark is a special character
+in C++, used to identify string values.
+
+If we want to find the
+first appearance of a quotation mark, we have to write something
+like:
+
+\begin{verbatim}
+  int index = line.find ('\"');
+\end{verbatim}
+%
+The argument here looks like a mess, but it represents a single
+character, a double quotation mark.  The outermost single-quotes
+indicate that this is a character value, as usual.  The backslash
+(\verb+\+) indicates that we want to treat the next character
+literally.  The sequence \verb+\"+ represents a quotation mark; the
+sequence \verb+\'+ represents a single-quote.  Interestingly, the
+sequence \verb+\\+ represents a single backslash.  The first backslash
+indicates that we should take the second backslash seriously.
+
+\index{special character}
+\index{character!special sequence}
+\index{backslash}
+
+Parsing input lines consists of finding the beginning and
+end of each city name and using
+the {\tt substr} function to extract the cities and distance.
+{\tt substr} is an {\tt apstring} member function;
+it takes two arguments, the starting index of the substring
+and the length.
+
+\index{find}
+
+\begin{verbatim}
+void processLine (const apstring& line)
+{
+  // the character we are looking for is a quotation mark
+  char quote = '\"';
+
+  // store the indices of the quotation marks in a vector
+  apvector<int> quoteIndex (4);
+
+  // find the first quotation mark using the built-in find
+  quoteIndex[0] = line.find (quote);
+
+  // find the other quotation marks using the find from Chapter 7
+  for (int i=1; i<4; i++) {
+    quoteIndex[i] = find (line, quote, quoteIndex[i-1]+1);
+  }
+
+  // break the line up into substrings
+  int len1 = quoteIndex[1] - quoteIndex[0] - 1;
+  apstring city1 = line.substr (quoteIndex[0]+1, len1);
+  int len2 = quoteIndex[3] - quoteIndex[2] - 1;
+  apstring city2 = line.substr (quoteIndex[2]+1, len2);
+  int len3 = line.length() - quoteIndex[2] - 1;
+  apstring distString = line.substr (quoteIndex[3]+1, len3);
+
+  // output the extracted information
+  cout << city1 << "\t" << city2 << "\t" << distString << endl;
+}
+\end{verbatim}
+%
+Of course, just displaying the extracted information is not
+exactly what we want, but it is a good starting place.
+
+\section{Parsing numbers}
+\index{parsing number}
+\index{atoi}
+\index{convert!to integer}
+
+The next task is to convert the numbers in the file from strings to
+integers.  When people write large numbers, they often use commas to
+group the digits, as in 1,750.  Most of the time when computers write
+large numbers, they don't include commas, and the built-in functions
+for reading numbers usually can't handle them.  That makes the
+conversion a little more difficult, but it also provides an
+opportunity to write a comma-stripping function, so that's ok.  Once
+we get rid of the commas, we can use the library function {\tt atoi}
+to convert to integer.  {\tt atoi} is defined in the header file {\tt
+cstdlib}.
+
+\index{character!classification}
+\index{isdigit}
+
+To get rid of the commas, one option is to traverse the string and
+check whether each character is a digit.  If so, we add it to the
+result string.  At the end of the loop, the result string contains all
+the digits from the original string, in order.
+
+\begin{verbatim}
+int convertToInt (const apstring& s)
+{
+  apstring digitString = "";
+
+  for (int i=0; i<s.length(); i++) {
+    if (isdigit (s[i])) {
+      digitString += s[i];
+    }
+  }
+  return atoi (digitString.c_str());
+}
+\end{verbatim}
+%
+The variable {\tt digitString} is an example of an {\bf accumulator}.  It is
+similar to the counter we saw in Section~\ref{loopcount},
+except that instead of getting incremented, it gets accumulates
+one new character at a time, using string concatentation.
+
+The expression
+
+\begin{verbatim}
+      digitString += s[i];
+\end{verbatim}
+%
+is equivalent to
+
+\begin{verbatim}
+      digitString = digitString + s[i];
+\end{verbatim}
+%
+Both statements add a single character onto the end of the existing
+string.
+
+\index{concatentation}
+\index{string!concatentation}
+\index{accumulator}
+\index{pattern!accumulator}
+
+Since {\tt atoi} takes a C string as a parameter, we have
+to convert {\tt digitString} to a C string before passing it
+as an argument.
+
+\section{The {\tt Set} data structure}
+\index{Set}
+\index{data structure}
+
+A data structure is a container for grouping a collection
+of data into a single object.  We have seen some examples already,
+including {\tt apstring}s, which are collections of characters,
+and {\tt apvector}s which are collections on any type.
+
+An ordered set is a collection of items with two defining
+properties:
+
+\begin{description}
+
+\item[Ordering:] The elements of the set have indices associated
+with them.  We can use these indices to identify elements of the set.
+
+\item[Uniqueness:] No element appears in the set more than once.
+If you try to add an element to a set, and it already exists, there
+is no effect.
+
+\end{description}
+
+In addition, our implementation of an ordered set will have the
+following property:
+
+\begin{description}
+
+\item[Arbitrary size:] As we add elements to the set, it expands
+to make room for new elements.
+
+\end{description}
+
+Both {\tt apstring}s and {\tt apvector}s have an ordering; every
+element has an index we can use to identify it.  Both none of
+the data structures we have seen so far have the properties of
+uniqueness or arbitrary size.
+
+\index{ordering}
+
+To achieve uniqueness, we have to write an {\tt add} function
+that searches the set to see if it already exists.  To make the
+set expand as elements are added, we can take advantage of the
+{\tt resize} function on {\tt apvector}s.
+
+Here is the beginning of a class definition for a {\tt Set}.
+
+\begin{verbatim}
+class Set {
+private:
+  apvector<apstring> elements;
+  int numElements;
+
+public:
+  Set (int n);
+
+  int getNumElements () const;
+  apstring getElement (int i) const;
+  int find (const apstring& s) const;
+  int add (const apstring& s);
+};
+
+Set::Set (int n)
+{
+  apvector<apstring> temp (n);
+  elements = temp;
+  numElements = 0;
+}
+\end{verbatim}
+%
+The instance variables are an {\tt apvector} of strings and an
+integer that keeps track of how many elements there are in the
+set.  Keep in mind that the number of elements in the
+set, {\tt numElements}, is not the same thing as the size
+of the {\tt apvector}.  Usually it will be smaller.
+
+\index{constructor}
+
+The {\tt Set} constructor takes a single parameter, which is
+the initial size of the {\tt apvector}.  The initial number
+of elements is always zero.
+
+{\tt getNumElements} and {\tt getElement} are accessor functions
+for the instance variables, which are private.  {\tt numElements}
+is a read-only variable, so we provide a {\tt get} function
+but not a {\tt set} function.
+
+\begin{verbatim}
+int Set::getNumElements () const
+{
+  return numElements;
+}
+\end{verbatim}
+%
+Why do we have to prevent client programs from changing {\tt
+getNumElements}?  What are the invariants for this type, and
+how could a client program break an invariant.  As we look
+at the rest of the {\tt Set} member function, see if you can
+convince yourself that they all maintain the invariants.
+
+\index{data encapsulation}
+\index{encapsulation!data}
+
+When we use the {\tt []} operator to access the {\tt apvector},
+it checks to make sure the index is greater than or equal to zero
+and less than the length of the {\tt apvector}.  To access the
+elements of a set, though, we need to check a stronger condition.
+The index has to be less than the number of elements, which 
+might be smaller than the length of the {\tt apvector}.
+
+\begin{verbatim}
+apstring Set::getElement (int i) const
+{
+  if (i < numElements) {
+    return elements[i];
+  } else {
+    cout << "Set index out of range." << endl;
+    exit (1);
+  }
+}
+\end{verbatim}
+%
+If {\tt getElement} gets an index that is out of range, it prints
+an error message (not the most useful message, I admit), and
+exits.
+
+\index{run-time error}
+
+The interesting functions are {\tt find} and {\tt add}.  By
+now, the pattern for traversing and searching should be old
+hat:
+
+\begin{verbatim}
+int Set::find (const apstring& s) const
+{
+  for (int i=0; i<numElements; i++) {
+    if (elements[i] == s) return i;
+  }
+  return -1;
+}
+\end{verbatim}
+%
+So that leaves us with {\tt add}.  Often the return type for
+something like {\tt add} would be void, but in this case it
+might be useful to make it return the index of the element.
+
+\begin{verbatim}
+int Set::add (const apstring& s)
+{
+  // if the element is already in the set, return its index
+  int index = find (s);
+  if (index != -1) return index;
+
+  // if the apvector is full, double its size
+  if (numElements == elements.length()) {
+    elements.resize (elements.length() * 2);
+  }
+
+  // add the new elements and return its index
+  index = numElements;
+  elements[index] = s;
+  numElements++;
+  return index;
+}
+\end{verbatim}
+%
+The tricky thing here is that {\tt numElements} is used in
+two ways.  It is the number of elements in the set, of course,
+but it is also the index of the next element to be added.
+
+It takes a minute to convince yourself that that works, but
+consider this: when the number of elements is zero, the index
+of the next element is 0.  When the number of elements is
+equal to the length of the {\tt apvector}, that means that the
+vector is full, and we have to allocate more space (using
+{\tt resize}) before we can add the new element.
+
+\index{state diagram}
+
+Here is a state diagram showing a {\tt Set} object that
+initially contains space for 2 elements.
+
+\vspace {0.1in}
+\centerline{\epsfig{figure=set.eps,width=6in}}
+\vspace {0.1in}
+
+Now we can use the {\tt Set} class to keep track of the cities
+we find in the file.  In {\tt main} we create the {\tt Set} with
+an initial size of 2:
+
+\begin{verbatim}
+  Set cities (2);
+\end{verbatim}
+%
+Then in {\tt processLine} we add both cities to the {\tt Set}
+and store the index that gets returned.
+
+\begin{verbatim}
+  int index1 = cities.add (city1);
+  int index2 = cities.add (city2);
+\end{verbatim}
+%
+I modified {\tt processLine} to take the {\tt cities} object
+as a second parameter.
+
+\section {{\tt apmatrix}}
+\index{matrix}
+\index{apmatrix}
+
+An {\tt apmatrix} is similar to an {\tt apvector} except it
+is two-dimensional.  Instead of a length, it has two
+dimensions, called {\tt numrows} and {\tt numcols}, for
+``number of rows'' and ``number of columns.''
+
+Each element in the matrix is indentified by two indices;
+one specifies the row number, the other the column number.
+
+\index{index}
+
+To create a matrix, there are four constructors:
+
+\begin{verbatim}
+  apmatrix<char> m1;
+  apmatrix<int> m2 (3, 4);
+  apmatrix<double> m3 (rows, cols, 0.0);
+  apmatrix<double> m4 (m3);
+\end{verbatim}
+%
+The first is a do-nothing constructor that makes a matrix with both
+dimensions 0.  The second takes two integers, which are the initial
+number of rows and columns, in that order.  The third is the same as
+the second, except that it takes an additional parameter that is used
+to initialized the elements of the matrix.  The fourth is a copy
+constructor that takes another {\tt apmatrix} as a parameter.
+
+\index{constructor}
+
+Just as with {\tt apvectors}, we can make {\tt apmatrix}es with any
+type of elements (including {\tt apvector}s, and even {\tt
+apmatrix}es).
+
+To access the elements of a matrix, we use the {\tt []} operator
+to specify the row and column:
+
+\begin{verbatim}
+  m2[0][0] = 1;
+  m3[1][2] = 10.0 * m2[0][0];
+\end{verbatim}
+%
+If we try to access an element that is out of range, the program
+prints an error message and quits.
+
+\index{run-time error}
+
+The {\tt numrows} and {\tt numcols} functions get the number of
+rows and columns.  Remember that the row indices run from 0 to
+{\tt numrows() -1} and the column indices run from 0 to
+{\tt numcols() -1}.
+
+\index{loop!nested}
+
+The usual way to traverse a matrix is with a nested loop.
+This loop sets each element of the matrix to the sum of its
+two indices:
+
+\begin{verbatim}
+  for (int row=0; row < m2.numrows(); row++) {
+    for (int col=0; col < m2.numcols(); col++) {
+      m2[row][col] = row + col;
+    }
+  }
+\end{verbatim}
+%
+This loop prints each row of the matrix with tabs between the
+elements and newlines between the rows:
+
+\begin{verbatim}
+  for (int row=0; row < m2.numrows(); row++) {
+    for (int col=0; col < m2.numcols(); col++) {
+      cout << m2[row][col] << "\t";
+    }
+    cout << endl;
+  }
+\end{verbatim}
+%
+
+\section{A distance matrix}
+
+Finally, we are ready to put the data from the file into
+a matrix.  Specifically, the matrix will have one row and
+one column for each city.
+
+We'll create the matrix in {\tt main}, with plenty of space
+to spare:
+
+\begin{verbatim}
+  apmatrix<int> distances (50, 50, 0);
+\end{verbatim}
+%
+
+Inside {\tt processLine}, we add new information to the
+matrix by getting the indices of the two cities from the
+{\tt Set} and using them as matrix indices:
+
+\begin{verbatim}
+  int dist = convertToInt (distString);
+  int index1 = cities.add (city1);
+  int index2 = cities.add (city2);
+
+  distances[index1][index2] = distance;
+  distances[index2][index1] = distance;
+\end{verbatim}
+%
+Finally, in {\tt main} we can print the information in a
+human-readable form:
+
+\begin{verbatim}
+  for (int i=0; i<cities.getNumElements(); i++) {
+    cout << cities.getElement(i) << "\t";
+
+    for (int j=0; j<=i; j++) {
+      cout << distances[i][j] << "\t";
+    }
+    cout << endl;
+  }
+
+  cout << "\t";
+  for (int i=0; i<cities.getNumElements(); i++) {
+    cout << cities.getElement(i) << "\t";
+  }
+  cout << endl;
+\end{verbatim}
+%
+This code produces the output shown at the beginning of the
+chapter.  The original data is available from this book's web page.
+
+\section{A proper distance matrix}
+
+Although this code works, it is not as well organized as it
+should be.  Now that we have written a prototype, we are in a
+good position to evaluate the design and improve it.
+
+What are some of the problems with the existing code?
+
+\begin{enumerate}
+
+\item We did not know ahead of time how big to make the distance
+matrix, so we chose an arbitrary large number (50) and made it
+a fixed size.  It would be better to allow the distance matrix
+to expand in the same way a {\tt Set} does.  The {\tt apmatrix}
+class has a function called {\tt resize} that makes this possible.
+
+\index{resize}
+
+\item The data in the distance matrix is not well-encapsulated.
+We have to pass the set of city names and the matrix itself
+as arguments to {\tt processLine}, which is awkward.  Also,
+use of the distance matrix is error prone because we have not
+provided accessor functions that perform error-checking.
+It might be a good idea to take the {\tt Set} of city names
+and the {\tt apmatrix} of distances, and combine them into a
+single object called a {\tt DistMatrix}.
+
+\end{enumerate}
+
+Here is a draft of what the header for a {\tt DistMatrix}
+might look like:
+
+\begin{verbatim}
+class DistMatrix {
+private:
+  Set cities;
+  apmatrix<int> distances;
+
+public:
+  DistMatrix (int rows);
+
+  void add (const apstring& city1, const apstring& city2, int dist);
+  int distance (int i, int j) const;
+  int distance (const apstring& city1, const apstring& city2) const;
+  apstring cityName (int i) const;
+  int numCities () const;
+  void print ();
+};
+\end{verbatim}
+%
+Using this interface simplifies {\tt main}:
+
+\begin{verbatim}
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+
+int main ()
+{
+  apstring line;
+  ifstream infile ("distances");
+  DistMatrix distances (2);
+
+  while (true) {
+    getline (infile, line);
+    if (infile.eof()) break;
+    processLine (line, distances);
+  }
+
+  distances.print ();
+  return 0;
+}
+\end{verbatim}
+%
+It also simplifies {\tt processLine}:
+
+\begin{verbatim}
+void processLine (const apstring& line, DistMatrix& distances)
+{
+  char quote = '\"';
+  apvector<int> quoteIndex (4);
+  quoteIndex[0] = line.find (quote);
+  for (int i=1; i<4; i++) {
+    quoteIndex[i] = find (line, quote, quoteIndex[i-1]+1);
+  }
+
+  // break the line up into substrings
+  int len1 = quoteIndex[1] - quoteIndex[0] - 1;
+  apstring city1 = line.substr (quoteIndex[0]+1, len1);
+  int len2 = quoteIndex[3] - quoteIndex[2] - 1;
+  apstring city2 = line.substr (quoteIndex[2]+1, len2);
+  int len3 = line.length() - quoteIndex[2] - 1;
+  apstring distString = line.substr (quoteIndex[3]+1, len3);
+  int distance = convertToInt (distString);
+
+  // add the new datum to the distances matrix
+  distances.add (city1, city2, distance);
+}
+\end{verbatim}
+%
+I will leave it as an exercise to you to implement the
+member functions of {\tt DistMatrix}.
+
+
+\section{Glossary}
+
+\begin{description}
+
+\item[ordered set:]  A data structure in which every element appears
+only once and every element has an index that identifies it.
+
+\item[stream:]  A data structure that represents a ``flow'' or
+sequence of data items from one place to another.  In C++ streams
+are used for input and output.
+
+\item[accumulator:]  A variable used inside a loop to accumulate
+a result, often by getting something added or concatenated during each
+iteration.
+
+\index{ordered set}
+\index{set!ordered}
+\index{stream}
+\index{accumulator}
+\index{pattern!accumulator}
+
+\end{description}
+
+

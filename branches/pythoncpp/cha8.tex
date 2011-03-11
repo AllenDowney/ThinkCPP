@@ -1,0 +1,649 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+\chapter{Structures}
+\label{structs}
+\index{struct}
+
+\section{Compound values}
+
+Most of the data types we have been working with represent a single
+value---an integer, a floating-point number, a boolean value.  {\tt
+string}s are different in the sense that they are made up of smaller
+pieces, the characters.  Thus, {\tt string}s are an example of a
+{\bf compound} type.
+
+Depending on what we are doing, we may want to treat a compound type
+as a single thing (or object), or we may want to access its parts (or
+instance variables).  This ambiguity is useful.
+
+It is also useful to be able to create your own compound values.  C++
+provides two mechanisms for doing that: {\bf structures} and {\bf
+classes}.  We will start out with structures and get to classes in
+Chapter~\ref{class} (there is not much difference between them).
+
+\section{{\tt Point} objects}
+\index{Point}
+\index{struct!Point}
+
+As a simple example of a compound structure, consider the concept of a
+mathematical point.  At one level, a point is two numbers
+(coordinates) that we treat collectively as a single object.  In
+mathematical notation, points are often written in parentheses, with a
+comma separating the coordinates.  For example, $(0, 0)$ indicates the
+origin, and $(x, y)$ indicates the point $x$ units to the right and
+$y$ units up from the origin.
+
+A natural way to represent a point in C++ is with two {\tt double}s.
+The question, then, is how to group these two values into
+a compound object, or structure.  The answer is a {\tt struct}
+definition:
+
+\begin{verbatim}
+struct Point {
+  double x, y;
+};  
+\end{verbatim}
+%
+{\tt struct} definitions appear outside of any function definition,
+usually at the beginning of the program (after the {\tt include}
+statements).
+
+This definition indicates that there are two elements in this
+structure, named {\tt x} and {\tt y}.  These elements are called
+{\bf instance variables}, for reasons I will explain a little
+later.
+
+It is a common error to leave off the semi-colon at the end of a
+structure definition.  It might seem odd to put a semi-colon after a
+squiggly-brace, but you'll get used to it.
+
+Once you have defined the new structure, you can create variables
+with that type:
+
+\begin{verbatim}
+  Point blank;
+  blank.x = 3.0;
+  blank.y = 4.0;   
+\end{verbatim}
+%
+The first line is a conventional variable declaration: {\tt blank} has
+type {\tt Point}.  The next two lines initialize the instance variables of the
+structure.  The ``dot notation'' used here is similar to the syntax
+for invoking a function on an object, as in {\tt fruit.length()}.
+Of course, one difference is that function names are always followed
+by an argument list, even if it is empty.
+
+\index{declaration}
+\index{statement!declaration}
+\index{reference}
+\index{state diagram}
+\index{state}
+
+The result of these assignments is shown in the following
+state diagram:
+
+\vspace{0.1in}
+\centerline{\epsfig{figure=point.eps}}
+\vspace{0.1in}
+
+As usual, the name of the variable {\tt blank} appears outside the box
+and its value appears inside the box.  In this case, that value is
+a compound object with two named instance variables.
+
+\section{Accessing instance variables}
+\index{struct!instance variable}
+
+You can read the values of an instance variable using the same syntax we
+used to write them:
+
+\begin{verbatim}
+    int x = blank.x;
+\end{verbatim}
+%
+The expression {\tt blank.x} means ``go to the object named {\tt
+blank} and get the value of {\tt x}.''  In this case we assign that
+value to a local variable named {\tt x}.  Notice that there is no
+conflict between the local variable named {\tt x} and the instance
+variable named {\tt x}.  The purpose of dot notation is to identify
+{\em which} variable you are referring to unambiguously.
+
+You can use dot notation as part of any C++ expression, so the
+following are legal.
+
+\begin{verbatim}
+  cout << blank.x << ", " << blank.y << endl;
+  double distance = blank.x * blank.x + blank.y * blank.y;
+\end{verbatim}
+%
+The first line outputs {\tt 3, 4}; the second line calculates
+the value 25.
+
+\section{Operations on structures}
+\index{struct!operations}
+
+Most of the operators we have been using on other types, like
+mathematical operators ( {\tt +}, {\tt \%}, etc.) and comparison
+operators ({\tt ==}, {\tt >}, etc.), do not work on structures.
+Actually, it is possible to define the meaning of these operators
+for the new type, but we won't do that in this book.
+
+On the other hand, the assignment operator {\em does} work for
+structures.  It can be used in two ways: to initialize the instance
+variables of a structure or to copy the instance variables from one
+structure to another.  An initialization looks like this:
+
+\begin{verbatim}
+  Point blank = { 3.0, 4.0 };
+\end{verbatim}
+%
+The values in squiggly braces get assigned to the instance variables of
+the structure one by one, in order.  So in this case, {\tt x}
+gets the first value and {\tt y} gets the second.
+
+Unfortunately, this syntax can be used only in an initialization,
+not in an assignment statement.  So the following is illegal.
+
+\begin{verbatim}
+  Point blank;
+  blank = { 3.0, 4.0 };       // WRONG !!
+\end{verbatim}
+%
+You might wonder why this perfectly reasonable statement should
+be illegal; I'm not sure, but I think the problem is that the compiler
+doesn't know what type the right hand side should be.  If you
+add a typecast:
+
+\begin{verbatim}
+  Point blank;
+  blank = (Point){ 3.0, 4.0 };
+\end{verbatim}
+%
+That works.
+
+It is legal to assign one structure to
+another.  For example:
+
+\begin{verbatim}
+  Point p1 = { 3.0, 4.0 };
+  Point p2 = p1;
+  cout << p2.x << ", " <<  p2.y << endl;
+\end{verbatim}
+%
+The output of this program is {\tt 3, 4}.
+
+\section{Structures as parameters}
+\index{parameter}
+\index{struct!as parameter}
+
+You can pass structures as parameters in the usual way.  For
+example,
+
+\begin{verbatim}
+void printPoint (Point p) {
+  cout << "(" << p.x << ", " << p.y << ")" << endl;
+}
+\end{verbatim}
+%
+{\tt printPoint} takes a point as an argument and outputs it in
+the standard format.  If you call {\tt printPoint (blank)},
+it will output {\tt (3, 4)}.
+
+As a second example, we can rewrite the {\tt distance} function from
+Section~\ref{distance} so that it takes two {\tt Point}s as parameters
+instead of four {\tt double}s.
+
+\begin{verbatim}
+double distance (Point p1, Point p2) {
+  double dx = p2.x - p1.x;
+  double dy = p2.y - p1.y;
+  return sqrt (dx*dx + dy*dy);
+}
+\end{verbatim}
+
+\section{Call by value}
+\index{parameter passing}
+\index{call by value}
+
+When you pass a structure as an argument, remember that the
+argument and the parameter are not the same variable.  Instead,
+there are two variables (one in the caller and one in the
+callee) that have the same value, at least initially.  For
+example, when we call {\tt printPoint}, the stack diagram
+looks like this:
+
+\vspace{0.1in}
+\centerline{\epsfig{figure=point2.eps}}
+\vspace{0.1in}
+%
+If {\tt printPoint} happened to change one of the instance variables
+of {\tt p}, it would have no effect on {\tt blank}.  Of course, there
+is no reason for {\tt printPoint} to modify its parameter, so this
+isolation between the two functions is appropriate.
+
+This kind of parameter-passing is called ``pass by value''
+because it is the value of the structure (or other type) that
+gets passed to the function.
+
+\section{Call by reference}
+\index{parameter passing}
+\index{call by reference}
+\index{reference}
+
+An alternative parameter-passing mechanism that is available
+in C++ is called ``pass by reference.''  This mechanism makes
+it possible to pass a structure to a procedure and modify it.
+
+For example, you can reflect a point around the 45-degree line by
+swapping the two coordinates.  The most obvious (but incorrect) way to
+write a {\tt reflect} function is something like this:
+
+\begin{verbatim}
+void reflect (Point p)      // WRONG !!
+{
+  double temp = p.x;
+  p.x = p.y;
+  p.y = temp;
+}
+\end{verbatim}
+%
+But this won't work, because the changes we make in {\tt reflect}
+will have no effect on the caller.
+
+Instead, we have to specify that we want to pass the parameter by
+reference.  We do that by adding an ampersand ({\tt \&}) to the
+parameter declaration:
+
+\begin{verbatim}
+void reflect (Point& p)
+{
+  double temp = p.x;
+  p.x = p.y;
+  p.y = temp;
+}
+\end{verbatim}
+%
+Now we can call the function in the usual way:
+
+\begin{verbatim}
+  printPoint (blank);
+  reflect (blank);
+  printPoint (blank);
+\end{verbatim}
+%
+The output of this program is as expected:
+
+\begin{verbatim}
+(3, 4)
+(4, 3)
+\end{verbatim}
+%
+Here's how we would draw a stack diagram for this program:
+
+\vspace{0.1in}
+\centerline{\epsfig{figure=point3.eps}}
+\vspace{0.1in}
+%
+The parameter {\tt p} is a reference to the structure named {\tt
+blank}.  The usual representation for a reference is a dot with an
+arrow that points to whatever the reference refers to.
+
+The important thing to see in this diagram is that any changes that
+{\tt reflect} makes in {\tt p} will also affect {\tt blank}.
+
+Passing structures by reference is more versatile than passing by
+value, because the callee can modify the structure.  It is also
+faster, because the system does not have to copy the whole
+structure.  On the other hand, it is less safe, since it is harder to
+keep track of what gets modified where.  Nevertheless, in C++
+programs, almost all structures are passed by reference almost all the
+time.  In this book I will follow that convention.
+
+
+\section{Rectangles}
+\index{Rectangle}
+\index{struct!Rectangle}
+
+Now let's say that we want to create a structure to represent
+a rectangle.  The question is, what information do I have to
+provide in order to specify a rectangle?  To keep things simple
+let's assume that the rectangle will be oriented vertically or
+horizontally, never at an angle.
+
+There are a few possibilities: I could specify the center of
+the rectangle (two coordinates) and its size (width and height),
+or I could specify one of the corners and the size, or I
+could specify two opposing corners.
+
+The most common choice in existing programs is to specify the
+upper left corner of the rectangle and the size.  To do that
+in C++, we will define a structure that contains a {\tt Point}
+and two doubles.
+
+\begin{verbatim}
+struct Rectangle {
+  Point corner;
+  double width, height;
+};  
+\end{verbatim}
+%
+Notice that one structure can contain another.  In fact, this
+sort of thing is quite common.  Of course, this means that in
+order to create a {\tt Rectangle}, we have to create a {\tt Point}
+first:
+
+\begin{verbatim}
+  Point corner = { 0.0, 0.0 };
+  Rectangle box = { corner, 100.0, 200.0 };
+\end{verbatim}
+%
+This code creates a new {\tt Rectangle} structure and initializes the
+instance variables.  The figure shows the effect of this assignment.
+
+\vspace{0.1in}
+\centerline{\epsfig{figure=rectangle.eps}}
+\vspace{0.1in}
+%
+We can access the {\tt width} and {\tt height} in the usual way:
+
+\begin{verbatim}
+  box.width += 50.0;
+  cout << box.height << endl;
+\end{verbatim}
+%
+In order to access the instance variables of {\tt corner}, we can use a
+temporary variable:
+
+\begin{verbatim}
+  Point temp = box.corner;
+  double x = temp.x;
+\end{verbatim}
+%
+Alternatively, we can compose the two statements:
+
+\index{composition}
+
+\begin{verbatim}
+  double x = box.corner.x;
+\end{verbatim}
+%
+It makes the most sense to read this statement from right to
+left: ``Extract {\tt x} from the {\tt corner} of the {\tt box},
+and assign it to the local variable {\tt x}.''
+
+While we are on the subject of composition, I should point
+out that you can, in fact, create the {\tt Point} and the
+{\tt Rectangle} at the same time:
+
+\begin{verbatim}
+  Rectangle box = { { 0.0, 0.0 }, 100.0, 200.0 };
+\end{verbatim}
+%
+The innermost squiggly braces are the coordinates of the
+corner point; together they make up the first of the three
+values that go into the new {\tt Rectangle}.  This statement
+is an example of {\bf nested structure}.
+
+\index{nested structure}
+
+
+\section{Structures as return types}
+\index{struct!as return type}
+\index{return}
+\index{statement!return}
+
+You can write functions that return structures.  For example,
+{\tt findCenter} takes a {\tt Rectangle} as an argument and
+returns a {\tt Point} that contains the coordinates of the
+center of the {\tt Rectangle}:
+
+\begin{verbatim}
+Point findCenter (Rectangle& box)
+{
+  double x = box.corner.x + box.width/2;
+  double y = box.corner.y + box.height/2;
+  Point result = {x, y};
+  return result;
+}
+\end{verbatim}
+%
+To call this function, we have to pass a box as an argument
+(notice that it is being passed by reference), and assign the
+return value to a {\tt Point} variable:
+
+\begin{verbatim}
+  Rectangle box = { {0.0, 0.0}, 100, 200 };
+  Point center = findCenter (box);
+  printPoint (center);
+\end{verbatim}
+%
+The output of this program is {\tt (50, 100)}.
+
+\section {Passing other types by reference}
+\index{parameter passing}
+\index{call by reference}
+\index{reference}
+
+It's not just structures that can be passed by reference.
+All the other types we've seen can, too.  For example, to swap
+two integers, we could write something like:
+
+\begin{verbatim}
+void swap (int& x, int& y)
+{
+  int temp = x;
+  x = y;
+  y = temp;
+}
+\end{verbatim}
+%
+We would call this function in the usual way:
+
+\begin{verbatim}
+  int i = 7;
+  int j = 9;
+  swap (i, j);
+  cout << i << j << endl;
+\end{verbatim}
+%
+The output of this program is {\tt 97}.  Draw a stack
+diagram for this program to convince yourself this is true.
+If the parameters {\tt x} and {\tt y} were declared as
+regular parameters (without the {\tt \&}s), {\tt swap} would
+not work.  It would modify {\tt x} and {\tt y} and have no
+effect on {\tt i} and {\tt j}.
+
+When people start passing things like integers by reference,
+they often try to use an expression
+as a reference argument.  For example:
+
+\begin{verbatim}
+  int i = 7;
+  int j = 9;
+  swap (i, j+1);         // WRONG!!
+\end{verbatim}
+%
+This is not legal because the expression {\tt j+1} is not
+a variable---it does not occupy a location that the reference
+can refer to.  It is a little tricky to figure out exactly
+what kinds of expressions can be passed by reference.  For now
+a good rule of thumb is that reference arguments have to be
+variables.
+
+\section{Getting user input}
+\label{input}
+\index{input!keyboard}
+
+The programs we have written so far are pretty predictable;
+they do the same thing every time they run.  Most of the time,
+though, we want programs that take input from the user and
+respond accordingly.
+
+There are many ways to get input, including keyboard
+input, mouse movements and button clicks, as well as more exotic
+mechanisms like voice control and retinal scanning.  In this
+text we will consider only keyboard input.
+
+\index{stream}
+\index{cin}
+\index{cout}
+
+In the header file {\tt iostream},
+C++ defines an object named {\tt cin} that handles input in
+much the same way that {\tt cout} handles output.  To get an
+integer value from the user:
+
+\begin{verbatim}
+  int x;
+  cin >> x;
+\end{verbatim}
+%
+The {\tt >>} operator causes the program to stop executing and
+wait for the user to type something.  If the user types a valid
+integer, the program converts it into an integer value and
+stores it in {\tt x}.
+
+\index{operator!{\tt >>}}
+
+If the user types something other than an integer,
+C++ doesn't report an error, or anything sensible like that.
+Instead, it puts some meaningless value in {\tt x} and continues.
+
+Fortunately, there is a way to check and see if an input
+statement succeeds.  We can invoke the {\tt good} function on
+{\tt cin} to check what is called the {\bf stream state}.
+{\tt good} returns a {\tt bool}: if true, then the last input
+statement succeeded.  If not, we know that some previous operation
+failed, and also that the next operation will fail.
+
+Thus, getting input from the user might look like this:
+
+\begin{verbatim}
+#include <iostream>
+
+using namespace std;
+
+int main ()
+{
+  int x;
+
+  // prompt the user for input
+  cout << "Enter an integer: ";
+
+  // get input
+  cin >> x;
+
+  // check and see if the input statement succeeded
+  if (cin.good() == false) {
+    cout << "That was not an integer." << endl;
+    return -1;
+  }
+
+  // print the value we got from the user
+  cout << x << endl;
+  return 0;
+}
+\end{verbatim}
+%
+{\tt cin} can also be used to input a {\tt string}:
+
+\begin{verbatim}
+  string name;
+
+  cout << "What is your name? ";
+  cin >> name;
+  cout << name << endl;
+\end{verbatim}
+%
+Unfortunately, this statement only takes the first word of
+input, and leaves the rest for the next input statement.
+So, if you run this program and type your full name, it
+will only output your first name.
+
+Because of these problems (inability to handle errors and
+funny behavior), I avoid using the {\tt >>} operator altogether,
+unless I am reading data from a source that is known to be
+error-free.
+
+Instead, I use a function in the header {\tt string} called {\tt getline}.
+
+\begin{verbatim}
+  string name;
+
+  cout << "What is your name? ";
+  getline (cin, name);
+  cout << name << endl;
+\end{verbatim}
+%
+The first argument to {\tt getline} is {\tt cin}, which is
+where the input is coming from.  The second argument is the
+name of the {\tt string} where you want the result to be
+stored.
+
+{\tt getline} reads the entire line until the user hits
+Return or Enter.  This is useful for inputting strings that
+contain spaces.
+
+In fact, {\tt getline} is generally useful for getting input
+of any kind.  For example, if you wanted the user to type an
+integer, you could input a string and then check to see if
+it is a valid integer.  If so, you can convert it to an integer
+value.  If not, you can print an error message and ask the user
+to try again.
+
+To convert a string to an integer you can use the {\tt atoi}
+function defined in the header file {\tt cstdlib}.  We will
+get to that in Section~\ref{parsing}.
+
+\section{Glossary}
+
+\begin{description}
+
+\item[structure:]  A collection of data grouped together and
+treated as a single object.
+
+\item[instance variable:]  One of the named pieces of data that make up
+a structure.
+
+\item[reference:]  A value that indicates or refers to a variable
+or structure.  In a state diagram, a reference appears as an arrow.
+
+\item[pass by value:]  A method of parameter-passing in which the
+value provided as an argument is copied into the corresponding
+parameter, but the parameter and the argument occupy distinct
+locations.
+
+\item[pass by reference:]  A method of parameter-passing in which
+the parameter is a reference to the argument variable.  Changes
+to the parameter also affect the argument variable.
+
+\index{structure}
+\index{instance variable}
+\index{reference}
+\index{pass by value}
+\index{pass by reference}
+
+\end{description}
+

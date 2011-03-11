@@ -1,0 +1,735 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+\chapter{Vectors}
+\label{vectors}
+\index{vector}
+\index{type!vector}
+
+A {\bf vector} is a set of values where each value is identified by a
+number (called an index).  An {\tt string} is similar to a vector,
+since it is made up of an indexed set of characters.  The nice thing
+about vectors is that they can be made up of any type of element,
+including basic types like {\tt int}s and {\tt double}s, 
+and user-defined types like {\tt Point} and {\tt Time}.
+
+The {\tt vector} type is defined in the C++ Standard Template Library (STL).
+In order to use it, you have to include the header file {\tt
+vector}; again, the details of how to do that depend on your
+programming environment.
+
+You can create a vector the same way you create other variable types:
+
+\begin{verbatim}
+  vector<int> count;
+  vector<double> doubleVector;
+\end{verbatim}
+%
+The type that makes up the vector appears in angle brackets ({\tt <}
+and {\tt >}).  The first line creates a vector of integers named {\tt
+count}; the second creates a vector of {\tt double}s.  Although these
+statements are legal, they are not very useful because they create
+vectors that have no elements (their size is zero).  It is more
+common to specify the size of the vector in parentheses:
+
+\begin{verbatim}
+  vector<int> count (4);
+\end{verbatim}
+%
+The syntax here is a little odd; it looks like a combination of a
+variable declarations and a function call.  In fact, that's exactly
+what it is.  The function we are invoking is an {\tt vector}
+constructor.  A {\bf constructor} is a special function that creates
+new objects and initializes their instance variables.  In this case,
+the constructor takes a single argument, which is the size of the new
+vector.
+
+\index{constructor}
+
+The following figure shows how vectors are represented in state
+diagrams:
+
+\vspace{0.1in}
+\centerline{\epsfig{figure=vector.eps}}
+\vspace{0.1in}
+
+The large numbers inside the boxes are the {\bf elements} of
+the vector.  The small numbers outside the boxes are the
+indices used to identify each box.  When you allocate a new
+vector, the elements are not initialized.  They could contain
+any values.
+
+There is another constructor for {\tt vector}s that takes
+two parameters; the second is a ``fill value,'' the
+value that will be assigned to each of the elements.
+
+\begin{verbatim}
+  vector<int> count (4, 0);
+\end{verbatim}
+%
+This statement creates a vector of four elements and initializes
+all of them to zero.
+
+\section{Accessing elements}
+\index{element}
+\index{vector!element}
+
+The {\tt []} operator reads and writes the elements of a vector in
+much the same way it accesses the characters in an {\tt apstring}.  As
+with {\tt apstring}s, the indices start at zero, so {\tt count[0]}
+refers to the ``zeroeth'' element of the vector, and {\tt count[1]}
+refers to the ``oneth'' element.  You can use the {\tt []} operator
+anywhere in an expression:
+
+\begin{verbatim}
+  count[0] = 7;
+  count[1] = count[0] * 2;
+  count[2]++;
+  count[3] -= 60;
+\end{verbatim}
+%
+All of these are legal assignment statements.  Here is the
+effect of this code fragment:
+
+\vspace{0.1in}
+\centerline{\epsfig{figure=vector2.eps}}
+\vspace{0.1in}
+
+Since elements of this vector are numbered from 0 to 3, there is no
+element with the index 4.  It is a common error to go beyond the
+bounds of a vector, which causes a run-time error.  The program outputs
+an error message like ``Illegal vector index'', and then quits.
+
+\index{run-time error}
+\index{index}
+\index{expression}
+
+You can use any expression as an index, as long as it has type {\tt
+int}.  One of the most common ways to index a vector is with a loop
+variable.  For example:
+
+\begin{verbatim}
+  int i = 0;
+  while (i < 4) {
+    cout << count[i] << endl;
+    i++;
+  }
+\end{verbatim}
+%
+This {\tt while} loop counts from 0
+to 4; when the loop variable {\tt i} is 4, the
+condition fails and the loop terminates.  Thus, the body
+of the loop is only executed when {\tt i} is 0, 1, 2 and 3.
+
+\index{loop}
+\index{loop variable}
+\index{variable!loop}
+
+Each time through the loop we use {\tt i} as an index into
+the vector, outputting the {\tt i}th element.  This type of
+vector traversal is very common.  Vectors and loops go together
+like fava beans and a nice Chianti.
+
+\section{Copying vectors}
+\index{vector!copying}
+
+There is one more constructor for {\tt vector}s, which is
+called a copy constructor because it takes one {\tt vector}
+as an argument and creates a new vector that is the same size,
+with the same elements.
+
+\begin{verbatim}
+  vector<int> copy (count);
+\end{verbatim}
+%
+Although this syntax is legal, it is almost never used for
+{\tt vector}s because there is a better alternative:
+
+\begin{verbatim}
+  vector<int> copy = count;
+\end{verbatim}
+%
+The {\tt =} operator works on {\tt vector}s in pretty much
+the way you would expect.
+
+\section{{\tt for} loops}
+
+The loops we have written so far have a number of elements
+in common.  All of them start by initializing a variable;
+they have a test, or condition, that depends on that variable;
+and inside the loop they do something to that variable,
+like increment it.
+
+\index{loop!for}
+\index{for}
+\index{statement!for}
+
+This type of loop is so common that there is an alternate
+loop statement, called {\tt for}, that expresses it more
+concisely.  The general syntax looks like this:
+
+\begin{verbatim}
+  for (INITIALIZER; CONDITION; INCREMENTOR) {
+    BODY
+  }
+\end{verbatim}
+%
+This statement is exactly equivalent to
+
+\begin{verbatim}
+  INITIALIZER;
+  while (CONDITION) {
+    BODY
+    INCREMENTOR
+  }
+\end{verbatim}
+%
+except that it is more concise and, since it puts all the
+loop-related statements in one place, it is easier to read.
+For example:
+
+\begin{verbatim}
+  int i;
+  for (i = 0; i < 4; i++) {
+    cout << count[i] << endl;
+  }
+\end{verbatim}
+%
+is equivalent to 
+
+\begin{verbatim}
+  int i = 0;
+  while (i < 4) {
+    cout << count[i] << endl;
+    i++;
+  }
+\end{verbatim}
+
+\section{Vector size}
+\index{size!vector}
+\index{vector!size}
+
+There are a few functions you can invoke on an
+{\tt vector}.  One of them is very useful, though: {\tt size()}.
+Not surprisingly, it returns the size of the vector (the number
+of elements).
+
+It is a good idea to use this value as the upper bound of a loop,
+rather than a constant.  That way, if the size of the vector
+changes, you won't have to go through the program changing all the
+loops; they will work correctly for any size vector.
+
+\begin{verbatim}
+  int i;
+  for (i = 0; i < count.size(); i++) {
+    cout << count[i] << endl;
+  }
+\end{verbatim}
+%
+The last time the body of the loop gets executed, the value of {\tt i}
+is {\tt count.size() - 1}, which is the index of the last element.  When
+{\tt i} is equal to {\tt count.size()}, the condition fails and the body
+is not executed, which is a good thing, since it would cause a
+run-time error. One thing that we should notice here is that the
+size() function is called every time the loop is executed. Calling
+a function again and again reduces execution speed, so it would be better
+to store the size in some variable by calling the {\tt size()} function
+before the loop begins, and use this variable to check for the last element.
+You can try this program as an excercise.
+
+\section{Vector functions}
+\index{functions!vector}
+\index{vector!functions}
+
+The best feature of a vector is its resizeability A vector, once declared,
+can be resized from anywhere within the program. Suppose we have a situation
+where we input numbers from the user and store them in a vector till he
+inputs {\tt -1}, and then display them. In such a case, we do not know the size of the
+vector beforehand. So we need wish add new values to the end of
+a vector as the user inputs them. We can use then vector
+function {\tt push\_back()} for that purpose.
+
+\begin{verbatim}
+  #include<iostream>
+  #include<vector>
+  using namespace std;
+  int main()
+  {
+    vector<int> values;
+    int c,i,len;
+    cin>>c;
+    
+    while(c != -1) {
+      values.push_back(c);
+      cin >> c;
+    }
+    len=values.size();
+    for(i = 0; i < len; i++) {
+      cout << values[i] << endl;
+    }
+  }
+
+\end{verbatim}
+
+\section{Random numbers}
+\label{random}
+\label{pseudorandom}
+\index{random number}
+\index{deterministic}
+\index{nondeterministic}
+
+Most computer programs do the same thing every time they are executed,
+so they are said to be {\bf deterministic}.  Usually, determinism is a
+good thing, since we expect the same calculation to yield the same
+result.  For some applications, though, we would like the
+computer to be unpredictable.  Games are an obvious example.
+
+Making a program truly {\bf nondeterministic} turns out to be not
+so easy, but there are ways to make it at least seem
+nondeterministic.  One of them is to generate {pseudorandom} numbers and
+use them to determine the outcome of the program.
+Pseudorandom numbers
+are not truly random in the mathematical sense, but 
+for our purposes, they will do.
+
+C++ provides a function called {\tt random} that generates
+pseudorandom numbers.  It is declared in the
+header file {\tt cstdlib}, which contains a variety of ``standard
+library'' functions, hence the name.
+
+The return value from {\tt random} is an integer between 0 and {\tt
+RAND\_MAX}, where {\tt RAND\_MAX} is a large number (about 2 billion
+on my computer) also defined in the header file.  Each time you call
+{\tt random} you get a different randomly-generated number.  To see a
+sample, run this loop:
+
+\begin{verbatim}
+#include <iostream>
+#include <cstdlib>
+using namespace std;
+
+int main ()
+{
+  for (int i = 0; i < 4; i++) {
+    int x = random ();
+    cout << x << endl;
+  }
+  return 0;
+}
+
+  
+\end{verbatim}
+%
+On my machine I got the following output:
+
+\begin{verbatim}
+1804289383
+846930886
+1681692777
+1714636915
+\end{verbatim}
+%
+You will probably get something similar, but different, on yours.
+
+Of course, we don't always want to work with gigantic integers.
+More often we want to generate integers between 0 and some
+upper bound.  A simple way to do that is with the modulus
+operator.  For example:
+
+\begin{verbatim}
+  int x = random ();
+  int y = x % upperBound;
+\end{verbatim}
+%
+Since {\tt y} is the remainder when {\tt x} is divided by
+{\tt upperBound}, the only possible values for {\tt y}
+are between 0 and {\tt upperBound - 1}, including both
+end points.  Keep in mind, though, that {\tt y} will never
+be equal to {\tt upperBound}.
+
+It is also frequently useful to generate random floating-point values.
+A common way to do that is by dividing by {\tt RAND\_MAX}.  For
+example:
+
+\begin{verbatim}
+  int x = random ();
+  double y = double(x) / RAND_MAX;
+\end{verbatim}
+%
+This code sets {\tt y} to a random value between 0.0 and 1.0,
+including both end points.  As an exercise, you might want to
+think about how to generate a random floating-point value in
+a given range; for example, between 100.0 and 200.0.
+
+\section{Statistics}
+\index{statistics}
+\index{distribution}
+\index{mean}
+
+The numbers generated by {\tt random} are supposed to be distributed
+uniformly.  That means that each value in the range should be
+equally likely.  If we count the number of times each value appears,
+it should be roughly the same for all values, provided that we
+generate a large number of values.
+
+In the next few sections, we will write programs that generate
+a sequence of random numbers and check whether this property
+holds true.
+
+\section{Vector of random numbers}
+
+The first step is to generate a large number of random values
+and store them in a vector.  By ``large number,'' of course,
+I mean 20.  It's always a good idea to start with a manageable
+number, to help with debugging, and then increase it later.
+
+The following function takes a single argument, the size of
+the vector.  It allocates a new vector of {\tt int}s, 
+and fills it with random values between 0 and {\tt upperBound-1}.
+
+\begin{verbatim}
+vector<int> randomVector (int n, int upperBound) {
+  vector<int> vec (n);
+  for (int i = 0; i<vec.size(); i++) {
+    vec[i] = random () % upperBound;
+  }
+  return vec;
+}
+\end{verbatim}
+%
+The return type is {\tt vector<int>}, which means that
+this function returns a vector of integers.
+To test this function, it is convenient to have a function that
+outputs the contents of a vector.
+
+\begin{verbatim}
+void printVector (const vector<int>& vec) {
+  for (int i = 0; i<vec.size(); i++) {
+    cout << vec[i] << " ";
+  }
+}
+\end{verbatim}
+%
+Notice that it is legal to pass {\tt vector}s by reference.
+In fact it is quite common, since it makes it unnecessary to
+copy the vector.  Since {\tt printVector} does not modify the
+vector, we declare the parameter {\tt const}.
+
+The following code generates a vector and outputs it:
+
+\begin{verbatim}
+  int numValues = 20;
+  int upperBound = 10;
+  vector<int> vector = randomVector (numValues, upperBound);
+  printVector (vector);
+\end{verbatim}
+%
+On my machine the output is
+
+\begin{verbatim}
+3 6 7 5 3 5 6 2 9 1 2 7 0 9 3 6 0 6 2 6 
+\end{verbatim}
+%
+which is pretty random-looking.  Your results may differ.
+
+If these numbers are really random,
+we expect each digit to appear the same number of times---twice
+each.  In fact, the number 6 appears five times, and the numbers 4
+and 8 never appear at all.
+
+Do these results mean the values are not really uniform?  It's
+hard to tell.  With so few values, the chances are slim
+that we would get exactly what we expect.  But as the number
+of values increases, the outcome should be more predictable.
+
+To test this theory, we'll write some programs that count the
+number of times each value appears, and then see what happens
+when we increase {\tt numValues}.
+
+\section{Counting}
+\label{counting}
+\index{traverse!counting}
+\index{loop!counting}
+\index{counter}
+
+A good approach to problems like this is to think of simple functions
+that are easy to write, and that might turn out to be useful.  Then
+you can combine them into a solution.  This approach is sometimes
+called {\bf bottom-up design}.  Of course, it is not easy to
+know ahead of time which functions are likely to be useful, but as you
+gain experience you will have a better idea.
+
+\index{bottom-up design}
+\index{program development!bottom-up}
+
+Also, it is not always obvious what sort of things are easy to write,
+but a good approach is to look for subproblems that fit a pattern you
+have seen before.
+
+\index{pattern!counter}
+
+Back in Section~\ref{loopcount} we looked at a loop that traversed a
+string and counted the number of times a given letter appeared.  You
+can think of this program as an example of a pattern called ``traverse
+and count.''  The elements of this pattern are:
+
+\begin{itemize}
+
+\item A set or container that can be traversed, like a string
+or a vector.
+
+\item A test that you can apply to each element in the container.
+
+\item A counter that keeps track of how many elements pass
+the test.
+
+\end{itemize}
+
+In this case, I have a function in mind called {\tt howMany} that
+counts the number of elements in a vector that equal a given value.
+The parameters are the vector and the integer value we are looking
+for.  The return value is the number of times the value appears.
+
+\begin{verbatim}
+int howMany (const vector<int>& vec, int value) {
+  int count = 0;
+  for (int i=0; i< vec.size(); i++) {
+    if (vec[i] == value) count++;
+  }
+  return count;
+}
+\end{verbatim}
+
+
+\section{Checking the other values}
+
+{\tt howMany} only counts the occurrences of a particular value, and
+we are interested in seeing how many times each value appears.
+We can solve that problem with a loop:
+
+\begin{verbatim}
+  int numValues = 20;
+  int upperBound = 10;
+  vector<int> vector = randomVector (numValues, upperBound);
+
+  cout << "value\thowMany";
+
+  for (int i = 0; i<upperBound; i++) {
+    cout << i << '\t' << howMany (vector, i) << endl;
+  }
+\end{verbatim}
+%
+Notice that it is legal to declare a variable inside a {\tt for}
+statement.  This syntax is sometimes convenient, but you should
+be aware that a variable declared inside a loop only exists
+inside the loop.  If you try to refer to {\tt i} later, you
+will get a compiler error.
+
+This code uses the loop variable as an argument to
+{\tt howMany}, in order to check each value between 0 and 9,
+in order.  The result is:
+
+\begin{verbatim}
+value   howMany
+0       2
+1       1
+2       3
+3       3
+4       0
+5       2
+6       5
+7       2
+8       0
+9       2
+\end{verbatim}
+%
+Again, it is hard to tell if the digits are really appearing
+equally often.  If we increase {\tt numValues} to 100,000 we
+get the following:
+
+\begin{verbatim}
+value   howMany
+0       10130
+1       10072
+2       9990
+3       9842
+4       10174
+5       9930
+6       10059
+7       9954
+8       9891
+9       9958
+\end{verbatim}
+%
+In each case, the number of appearances is within about 1\% of
+the expected value (10,000), so we conclude that the random
+numbers are probably uniform.
+
+\section {A histogram}
+\index{histogram}
+
+It is often useful to take the data from the previous tables
+and store them for later access, rather than just print them.
+What we need is a way to store 10 integers.  We could create
+10 integer variables with names like {\tt howManyOnes},
+{\tt howManyTwos}, etc.  But that would require a lot of
+typing, and it would be a real pain later if we decided to
+change the range of values.
+
+A better solution is to use a vector with size 10.  That
+way we can create all ten storage locations at once and we
+can access them using indices, rather than ten different names.
+Here's how:
+
+\begin{verbatim}
+  int numValues = 100000;
+  int upperBound = 10;
+  vector<int> vector = randomVector (numValues, upperBound);
+  vector<int> histogram (upperBound);
+
+  for (int i = 0; i<upperBound; i++) {
+    int count = howMany (vector, i);
+    histogram[i] = count;
+  }
+\end{verbatim}
+%
+I called the vector {\bf histogram} because that's
+a statistical term for a vector of numbers that counts the
+number of appearances of a range of values.
+
+\index{histogram}
+
+The tricky thing here is that I am using the loop variable
+in two different ways.  First, it is an argument to {\tt howMany},
+specifying which value I am interested in.  Second, it is
+an index into the histogram, specifying which location I should
+store the result in.
+
+\section{A single-pass solution}
+
+Although this code works, it is not as efficient as it could
+be.  Every time it calls {\tt howMany}, it traverses the
+entire vector.  In this example we have to traverse the
+vector ten times!
+
+It would be better to make a single pass through the vector.
+For each value in the vector we could find the corresponding
+counter and increment it.  In other words, we can use the
+value from the vector as an index into the histogram.  Here's
+what that looks like:
+
+\begin{verbatim}
+  vector<int> histogram (upperBound, 0);
+
+  for (int i = 0; i<numValues; i++) {
+    int index = vector[i];
+    histogram[index]++;
+  }
+\end{verbatim}
+%
+The first line initializes the elements of the histogram to
+zeroes.  That way, when we use the increment
+operator ({\tt ++}) inside the loop, we know we are starting from zero.
+Forgetting to initialize counters is a common error.
+
+As an exercise, encapsulate this code in a function called {\tt
+histogram} that takes a vector and the range of values in the vector
+(in this case 0 through 10), and that returns a histogram of the
+values in the vector.
+
+\section{Random seeds}
+\index{seed}
+\index{random}
+
+If you have run the code in this chapter a few times, you might
+have noticed that you are getting the same ``random'' values
+every time.  That's not very random!
+
+One of the properties of pseudorandom number generators is that
+if they start from the same place they will generate
+the same sequence of values.  The starting place is called
+a {\bf seed}; by default, C++ uses
+the same seed every time you run the program.
+
+While you are debugging, it is often helpful to
+see the same sequence over and over.  That way, when you make
+a change to the program you can compare the output before and
+after the change.
+
+If you want to choose a different seed for the random number
+generator, you can use the {\tt srand} function.  It takes
+a single argument, which is an integer between 0 and {\tt RAND\_MAX}.
+
+For many applications, like games, you want to see a different
+random sequence every time the program runs.  A common way to
+do that is to use a library function like {\tt gettimeofday}
+to generate something reasonably unpredictable
+and unrepeatable, like the number of milliseconds since the
+last second tick, and use that number as a seed.  The details
+of how to do that depend on your development environment.
+
+\section{Glossary}
+
+\begin{description}
+
+\item[vector:]  A named collection of values, where all the
+values have the same type, and each value is identified by
+an index.
+
+\item[element:]  One of the values in a vector.  The {\tt []}
+operator selects elements of a vector.
+
+\item[index:]  An integer variable or value used to indicate
+an element of a vector.
+
+\item[constructor:]  A special function that creates a new
+object and initializes its instance variables.
+
+\item[deterministic:]  A program that does the same thing every
+time it is run.
+
+\item[pseudorandom:]  A sequence of numbers that appear to be
+random, but which are actually the product of a deterministic
+computation.
+
+\item[seed:]  A value used to initialize a random number sequence.
+Using the same seed should yield the same sequence of values.
+
+\item[bottom-up design:]  A method of program development that
+starts by writing small, useful functions and then assembling
+them into larger solutions.
+
+\item[histogram:]  A vector of integers where each integer
+counts the number of values that fall into a certain range.
+
+\index{vector}
+\index{element}
+\index{index}
+\index{constructor}
+\index{deterministic}
+\index{pseudorandom}
+\index{seed}
+\index{histogram}
+
+\end{description}

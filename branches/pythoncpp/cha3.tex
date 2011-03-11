@@ -1,0 +1,697 @@
+% LaTeX source for textbook ``How to think like a computer scientist''
+% Copyright (C) 1999  Allen B. Downey
+
+% This LaTeX source is free software; you can redistribute it and/or
+% modify it under the terms of the GNU General Public License as
+% published by the Free Software Foundation (version 2).
+
+% This LaTeX source is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+% General Public License for more details.
+
+% Compiling this LaTeX source has the effect of generating
+% a device-independent representation of a textbook, which
+% can be converted to other formats and printed.  All intermediate
+% representations (including DVI and Postscript), and all printed
+% copies of the textbook are also covered by the GNU General
+% Public License.
+
+% This distribution includes a file named COPYING that contains the text
+% of the GNU General Public License.  If it is missing, you can obtain
+% it from www.gnu.org or by writing to the Free Software Foundation,
+% Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+
+\chapter{Function}
+
+\section{Floating-point}
+\index{floating-point number}
+\index{type!double}
+\index{double (floating-point)}
+
+In the last chapter we had some problems dealing with numbers
+that were not integers.  We worked around the problem by measuring
+percentages instead of fractions, but a more general solution is
+to use floating-point numbers, which can represent fractions
+as well as integers.  In C++, there are two floating-point types,
+called {\tt float} and {\tt double}.  In this book we will use
+{\tt double}s exclusively.
+
+You can create floating-point variables and assign values to them
+using the same syntax we used for the other types.  For example:
+
+\begin{verbatim}
+  double pi;
+  pi = 3.14159;
+\end{verbatim}
+%
+It is also legal to declare a variable and assign a value to it at the
+same time:
+
+\begin{verbatim}
+  int x = 1;
+  String empty = "";
+  double pi = 3.14159;
+\end{verbatim}
+%
+In fact, this syntax is quite common.  A combined declaration
+and assignment is sometimes called an {\bf initialization}.
+
+\index{initialization}
+
+Although floating-point numbers are useful, they are
+often a source of confusion because there seems to be an
+overlap between integers and floating-point numbers.  For
+example, if you have the value {\tt 1}, is that an integer,
+a floating-point number, or both?
+
+Strictly speaking, C++ distinguishes the integer value {\tt 1}
+from the floating-point value {\tt 1.0}, even though they
+seem to be the same number.  They belong to
+different types, and strictly speaking, you are not allowed
+to make assignments between types.  For example, the following
+is illegal
+
+\begin{verbatim}
+    int x = 1.1;
+\end{verbatim}
+%
+because the variable on the left is an {\tt int}
+and the value on the right is a {\tt double}.  But it is easy
+to forget this rule, especially because there are places where C++
+automatically converts from one type to another.
+For example,
+
+\begin{verbatim}
+    double y = 1;
+\end{verbatim}
+%
+should technically not be legal, but C++ allows it by converting the
+{\tt int} to a {\tt double} automatically.  This leniency is
+convenient, but it can cause problems; for example:
+
+\begin{verbatim}
+    double y = 1 / 3;
+\end{verbatim}
+%
+You might expect the variable {\tt y} to be given the value
+{\tt 0.333333}, which is a legal floating-point value, but in
+fact it will get the value {\tt 0.0}.  The reason is that the
+expression on the right appears to be the ratio of two integers,
+so C++ does {\em integer} division, which yields the integer
+value {\tt 0}.  Converted to floating-point, the result is
+{\tt 0.0}.
+
+One way to solve this problem (once you figure out what
+it is) is to make the right-hand side a floating-point
+expression:
+
+\begin{verbatim}
+    double y = 1.0 / 3.0;
+\end{verbatim}
+%
+This sets {\tt y} to {\tt 0.333333}, as expected.
+
+\index{arithmetic!floating-point}
+
+All the operations we have seen---addition, subtraction,
+multiplication, and division---work on floating-point values,
+although you might be interested to know that the underlying mechanism
+is completely different.  In fact, most processors have special
+hardware just for performing floating-point operations.
+
+\section{Converting from {\tt double} to {\tt int}}
+\label{rounding}
+\index{rounding}
+\index{typecasting}
+
+As I mentioned, C++ converts {\tt int}s
+to {\tt double}s automatically if necessary, because no
+information is lost in the translation.  On the other hand,
+going from a {\tt double} to an {\tt int} requires rounding
+off.  C++ doesn't perform this operation automatically, in
+order to make sure that you, as the programmer, are aware
+of the loss of the fractional part of the number.
+
+The simplest way to convert a floating-point value to an integer is to
+use a {\bf typecast}.  Typecasting is so called because it allows you
+to take a value that belongs to one type and ``cast'' it into another
+type (in the sense of molding or reforming, not throwing).
+
+The syntax for typecasting is like the syntax
+for a function call.  For example:
+
+\begin{verbatim}
+  double pi = 3.14159;
+  int x = int (pi);
+\end{verbatim}
+%
+The {\tt int} function returns an integer, so {\tt x} gets the value
+3.  Converting to an integer always rounds down, even if the fraction
+part is 0.99999999.
+
+For every type in C++, there is a corresponding function that
+typecasts its argument to the appropriate type.
+
+\section{Math functions}
+\index{Math function}
+\index{function!Math}
+\index{expression}
+\index{argument}
+
+In mathematics, you have probably seen functions like $\sin$ and
+$\log$, and you have learned to evaluate expressions like
+$\sin(\pi/2)$ and $\log(1/x)$.  First, you evaluate the
+expression in parentheses, which is called the {\bf argument} of the
+function.  For example, $\pi/2$ is approximately 1.571, and $1/x$ is
+0.1 (if $x$ happens to be 10).
+
+Then you can evaluate the function itself, either by looking it up in
+a table or by performing various computations.  The $\sin$ of 1.571 is
+1, and the $\log$ of 0.1 is -1 (assuming that $\log$ indicates the
+logarithm base 10).
+
+This process can be applied repeatedly to evaluate more complicated
+expressions like $\log(1/\sin(\pi/2))$.  First we evaluate the
+argument of the innermost function, then evaluate the function,
+and so on.
+
+C++ provides a set of built-in functions that includes most
+of the mathematical operations you can think of.
+The math functions are invoked using a syntax that is similar to
+mathematical notation:
+
+\begin{verbatim}
+     double log = log (17.0);
+     double angle = 1.5;
+     double height = sin (angle);
+\end{verbatim}
+%
+The first example sets {\tt log} to the logarithm of 17, base
+$e$.  There is also a function called {\tt log10} that takes
+logarithms base 10.
+
+The second example finds the sine of the value of the variable
+{\tt angle}.  C++ assumes that the
+values you use with {\tt sin} and the other trigonometric functions
+({\tt cos}, {\tt tan}) are in {\em radians}.  To
+convert from degrees to radians, you can divide by 360
+and multiply by $2 \pi$.  
+
+If you don't happen to know $\pi$ to 15 digits, you can
+calculate it using the {\tt acos} function.  The arccosine
+(or inverse cosine) of -1 is $\pi$, because the cosine of
+$\pi$ is -1.
+
+\begin{verbatim}
+  double pi = acos(-1.0);
+  double degrees = 90;
+  double angle = degrees * 2 * pi / 360.0;
+\end{verbatim}
+%
+Before you can use any of the math functions, you have to
+include the math {\bf header file}.  Header files contain
+information the compiler needs about functions that are defined
+outside your program.  For example, in the ``Hello, world!''
+program we included a header file named {\tt iostream} using
+an {\bf include} statement:
+
+\begin{verbatim}
+#include <iostream>
+using namespace std;
+\end{verbatim}
+%
+{\tt iostream} contains information about input and output
+(I/O) streams, including the object named {\tt cout}.
+C++ has a powerful feature called namespaces, that
+allow you to write your own implementation of {\tt cout}.
+But in most cases, we would need to use the standard implementation.
+To convey this to the compiler, we use the line
+
+\begin{verbatim}
+using namespace std;
+\end{verbatim}
+
+As a rule of the thumb, you should write {\tt using namespace std;} whenever
+you use {\tt iostream}.
+\index{header file}
+\index{cmath}
+\index{iostream}
+
+Similarly, the math header file contains information
+about the math functions.  You can include it at the beginning
+of your program along with {\tt iostream}:
+
+\begin{verbatim}
+#include <cmath>
+\end{verbatim}
+
+Such header files have an initial `c' to signify that these
+header files have been derived from the {\bf C} language.
+
+\section {Composition}
+\label{composition}
+\index{composition}
+\index{expression}
+
+Just as with mathematical functions, C++ functions can be {\bf
+composed}, meaning that you use one expression as part of another.
+For example, you can use any expression as an argument to a function:
+
+\begin{verbatim}
+    double x = cos (angle + pi/2);
+\end{verbatim}
+%
+This statement takes the value of {\tt pi}, divides it by two and
+adds the result to the value of {\tt angle}.  The sum is
+then passed as an argument to the {\tt cos} function.
+
+You can also take the result of one function and pass it as
+an argument to another:
+
+\begin{verbatim}
+    double x = exp (log (10.0));
+\end{verbatim}
+%
+This
+statement finds the log base $e$ of 10 and then raises $e$ to that
+power.  The result gets assigned to {\tt x}; I hope you know what it
+is.
+
+\section{Adding new functions}
+\index{function!definition}
+\index{main}
+\index{function!main}
+
+So far we have only been using the functions that are built into C++,
+but it is also possible to add new functions.  Actually, we have already
+seen one function definition: {\tt main}.  The function named {\tt main}
+is special because it indicates where the execution of the program
+begins, but the syntax for {\tt main} is the same as for any other
+function definition:
+
+\begin{verbatim}
+  void NAME ( LIST OF PARAMETERS ) {
+    STATEMENTS
+  }
+\end{verbatim}
+%
+You can make up any name you want for your function, except
+that you can't call it {\tt main} or any other
+C++ keyword.  The list of
+parameters specifies what information, if any, you have to
+provide in order to use (or {\bf call}) the new function.
+
+{\tt main} doesn't take any parameters, as indicated by
+the empty parentheses {\tt ()} in it's definition.  The first couple
+of functions we are going to write also have no parameters, so the
+syntax looks like this:
+
+\begin{verbatim}
+  void newLine () {
+    cout << endl;
+  }
+\end{verbatim}
+%
+This function is named {\tt newLine}; it contains only a single
+statement, which outputs a newline character, represented by
+the special value {\tt endl}.
+
+In {\tt main} we can call this new function using syntax that
+is similar to the way we call the built-in C++ commands:
+
+\begin{verbatim}
+int main ()
+{
+  cout << "First Line." << endl;
+  newLine ();
+  cout << "Second Line." << endl;
+  return 0;
+}
+\end{verbatim}
+%
+The output of this program is
+
+\begin{verbatim}
+First line.
+
+Second line.
+\end{verbatim}
+%
+Notice the extra space between the two lines.  What if we wanted
+more space between the lines?  We could call the same
+function repeatedly:
+
+\begin{verbatim}
+int main ()
+{
+  cout << "First Line." << endl;
+  newLine ();
+  newLine ();
+  newLine ();
+  cout << "Second Line." << endl;
+  return 0;
+}
+\end{verbatim}
+%
+Or we could write a new function, named {\tt threeLine}, that 
+prints three new lines:
+
+\begin{verbatim}
+void threeLine ()
+{
+  newLine ();  newLine ();  newLine ();
+}
+
+int main ()
+{
+  cout << "First Line." << endl;
+  threeLine ();
+  cout << "Second Line." << endl;
+  return 0;
+}
+\end{verbatim}
+%
+You should notice a few things about this program:
+
+\begin{itemize}
+
+\item You can call the same procedure repeatedly.  In
+fact, it is quite common and useful to do so.
+
+\item You can have one function call another function.  In this
+case, {\tt main} calls {\tt threeLine} and {\tt threeLine}
+calls {\tt newLine}.  Again, this is common and useful.
+
+\item In {\tt threeLine} I wrote three statements all on the
+same line, which is syntactically legal (remember that spaces
+and new lines usually don't change the meaning of a program).
+On the other hand, it is usually a better idea to put each
+statement on a line by itself, to make your program easy to
+read.  I sometimes break that rule in this book to save space.
+
+\end{itemize}
+
+So far, it may not be clear why it is worth the trouble to
+create all these new functions.  Actually, there are a lot
+of reasons, but this example only demonstrates two:
+
+\begin{enumerate}
+
+\item Creating a new function gives you an opportunity to
+give a name to a group of statements.  Functions can simplify a program
+by hiding a complex computation behind a single command, and by using
+English words in place of arcane code.  Which is clearer, {\tt
+newLine} or {\tt cout << endl}?
+
+\item Creating a new function can make a program smaller by eliminating
+repetitive code.  For example, a short way to print nine consecutive
+new lines is to call {\tt threeLine} three times.  How would you
+print 27 new lines?
+
+\end{enumerate}
+
+\section {Definitions and uses}
+
+Pulling together all the code fragments from the previous
+section, the whole program looks like this:
+
+\begin{verbatim}
+#include <iostream>
+using namespace std;
+
+void newLine ()
+{
+  cout << endl;
+}
+
+void threeLine ()
+{
+  newLine ();  newLine ();  newLine ();
+}
+
+int main ()
+{
+  cout << "First Line." << endl;
+  threeLine ();
+  cout << "Second Line." << endl;
+  return 0;
+}
+\end{verbatim}
+
+This program contains three function definitions: {\tt newLine},
+{\tt threeLine}, and {\tt main}.
+
+Inside the definition of {\tt main}, there is a statement that
+uses or calls {\tt threeLine}.  Similarly, {\tt threeLine} calls
+{\tt newLine} three times.  Notice that the definition of each
+function appears above the place where it is used.
+
+This is necessary in C++; the definition of a function must
+appear before (above) the first use of the function.  You
+should try compiling this program with the functions in a
+different order and see what error messages you get.
+
+\section {Programs with multiple functions}
+
+When you look at a class definition that contains several functions, it
+is tempting to read it from top to bottom, but that is likely to be
+confusing, because that is not the {\bf order of execution} of the
+program.
+
+Execution always begins at the first statement of {\tt main},
+regardless of where it is in the program (often it is at the bottom).
+Statements are executed one at a time, in order, until you reach a
+function call.  Function calls are like a detour in the flow of
+execution.  Instead of going to the next statement, you go to the
+first line of the called function, execute all the statements there,
+and then come back and pick up again where you left off.
+
+That sounds simple enough, except that you have to remember that one
+function can call another.  Thus, while we are in the middle of {\tt
+main}, we might have to go off and execute the statements in {\tt
+threeLine}.  But while we are executing {\tt threeLine}, we get
+interrupted three times to go off and execute {\tt newLine}.
+
+Fortunately, C++ is adept at keeping track of where it is, so
+each time {\tt newLine} completes, the program picks up where it left
+off in {\tt threeLine}, and eventually gets back to {\tt main} so the
+program can terminate.
+
+What's the moral of this sordid tale?  When you read a program, don't
+read from top to bottom.  Instead, follow the flow of execution.
+
+\section {Parameters and arguments}
+\index{parameter}
+\index{argument}
+
+Some of the built-in functions we have used have {\bf parameters},
+which are values that you provide to let the function do its
+job.  For example, if you want to find the sine of a number,
+you have to indicate what the number is.  Thus, {\tt sin}
+takes a {\tt double} value as a parameter.
+
+Some functions take more than one parameter, like {\tt pow},
+which takes two {\tt doubles}, the base and the exponent.
+
+Notice that in each of these cases we have to specify not
+only how many parameters there are, but also what type they
+are.  So it shouldn't surprise you that when you write a
+class definition, the parameter list indicates the type of
+each parameter.  For example:
+
+\begin{verbatim}
+  void printTwice (char phil) {
+    cout << phil << phil << endl;
+  }
+\end{verbatim}
+%
+This function takes a single parameter, named {\tt phil}, that
+has type {\tt char}.  Whatever that parameter is (and at
+this point we have no idea what it is), it gets printed
+twice, followed by a newline.
+I chose the name {\tt phil} to suggest that the name
+you give a parameter is up to you, but in general you want to
+choose something more illustrative than {\tt phil}.
+
+In order to call this function, we have to provide a {\tt char}.
+For example, we might have a {\tt main} function like this:
+
+\begin{verbatim}
+  int main () {
+    printTwice ('a');
+    return 0;
+  }
+\end{verbatim}
+%
+The {\tt char} value you provide is called an {\bf argument}, and we
+say that the argument is {\bf passed} to the function.  In this
+case the value {\tt 'a'} is passed as an argument
+to {\tt printTwice} where it will get printed twice.
+
+Alternatively, if we had a {\tt char} variable, we could
+use it as an argument instead:
+
+\begin{verbatim}
+  int main () {
+    char argument = 'b';
+    printTwice (argument);
+    return 0;
+  }
+\end{verbatim}
+%
+Notice something very important here: the name of the variable we pass
+as an argument ({\tt argument}) has nothing to do with the name of the
+parameter ({\tt phil}).  Let me say that again:
+
+\begin{quote}
+
+{\bf The name of the variable we pass as an argument has nothing to do
+with the name of the parameter.}
+
+\end{quote}
+
+They can be the same or they can be different, but it is important
+to realize that they are not the same thing, except that they happen
+to have the same value (in this case the character {\tt 'b'}).
+
+The value you provide as an argument must have the same type as
+the parameter of the function you call.  This rule is
+important, but it is sometimes confusing because C++ sometimes
+converts arguments from one type to another automatically.  For
+now you should learn the general rule, and we will deal with
+exceptions later.
+
+\section {Parameters and variables are local}
+
+Parameters and
+variables only exist inside their own functions.  Within the
+confines of {\tt main}, there is no such thing as {\tt phil}.
+If you try to use it, the compiler will complain.  Similarly,
+inside {\tt printTwice} there is no such thing as {\tt argument}.
+
+Variables like this are said to be {\bf local}.  In order to
+keep track of parameters and local variables, it is useful to
+draw a {\bf stack diagram}.  Like state diagrams, stack diagrams
+show the value of each variable, but the variables are contained
+in larger boxes that indicate which function they belong to.
+
+For example, the state diagram for {\tt printTwice} looks 
+like this:
+
+\vspace{0.1in}
+\centerline{\epsfig{figure=stack.eps}}
+\vspace{0.1in}
+%
+Whenever a function is called, it creates a new {\bf instance}
+of that function.  Each instance of a function contains the
+parameters and local variables for that function.  In the
+diagram an instance of a function is represented by a box
+with the name of the function on the outside and the variables
+and parameters inside.
+
+In the example, {\tt main} has one local variable, {\tt argument}, and
+no parameters.  {\tt printTwice} has no local variables and one
+parameter, named {\tt phil}.
+
+\section {Functions with multiple parameters}
+\index{parameter!multiple}
+\index{function!multiple parameter}
+\index{class!Time}
+
+The syntax for declaring and invoking functions with multiple
+parameters is a common source of errors.  First, remember
+that you have to declare the type of every parameter.  For
+example
+
+\begin{verbatim}
+  void printTime (int hour, int minute) {
+    cout << hour;
+    cout << ":";
+    cout << minute;
+  }
+\end{verbatim}
+%
+It might be tempting to write {\tt (int hour, minute)}, but
+that format is only legal for variable declarations, not
+for parameters.
+
+Another common source of confusion is that you do not have
+to declare the types of arguments.  The following is wrong!
+
+\begin{verbatim}
+    int hour = 11;
+    int minute = 59;
+    printTime (int hour, int minute);   // WRONG!
+\end{verbatim}
+%
+In this case, the compiler can tell the type of {\tt hour}
+and {\tt minute} by looking at their declarations.  It is
+unnecessary and illegal to include the type when you pass them
+as arguments.  The correct
+syntax is {\tt printTime (hour, minute)}.
+
+\section {Functions with results}
+\index{fruitful function}
+\index{function!fruitful}
+
+You might have noticed by now that some of the functions we are using,
+like the math functions, yield results.  Other functions,
+like {\tt newLine}, perform an action but
+don't return a value.  That raises some questions:
+
+\begin{itemize}
+
+\item What happens if you call a function and you don't
+do anything with the result (i.e. you don't assign it to
+a variable or use it as part of a larger expression)?
+
+\item What happens if you use a function without a result as part
+of an expression, like {\tt newLine() + 7}?
+
+\item Can we write functions that yield results, or are we
+stuck with things like {\tt newLine} and {\tt printTwice}?
+
+\end{itemize}
+
+The answer to the third question is ``yes, you can write functions that
+return values,'' and we'll do it in a couple of chapters.  I will
+leave it up to you to answer the other two questions by trying them
+out.  Any time you have a question about what is legal or
+illegal in C++, a good way to find out is to ask the compiler.
+
+\section{Glossary}
+
+\begin{description}
+
+\item[floating-point:] A type of variable (or value) that can contain
+fractions as well as integers.  There are a few floating-point types
+in C++; the one we use in this book is {\tt double}.
+
+\item[initialization:]  A statement that declares a new variable
+and assigns a value to it at the same time.
+
+\item[function:]  A named sequence of statements that performs some
+useful function.  Functions may or may not take parameters, and may
+or may not produce a result.
+
+\item[parameter:]  A piece of information you provide
+in order to call a function.  Parameters are like variables in
+the sense that they contain values and have types.
+
+\item[argument:]  A value that you provide when you call a
+function.  This value must have the same type as the corresponding
+parameter.
+
+\item[call:]  Cause a function to be executed.
+
+\index{floating-point}
+\index{function}
+\index{parameter}
+\index{argument}
+\index{call}
+\index{initialization}
+
+\end{description}
+

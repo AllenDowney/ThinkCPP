@@ -16,23 +16,17 @@ PDFFLAGS = -dCompatibilityLevel=1.4 -dPDFSETTINGS=/prepress  \
 %.pdf: %.ps
 	ps2pdf $@
 
-all:	top.tex
-	latex top
-	makeindex top
-	latex top
-	dvips -Ppdf -o thinkCScpp.ps top
+all:	main.tex
+	latex main
+	makeindex main
+	latex main
+	dvips -Ppdf -o thinkCScpp.ps main
 	ps2pdf $(PDFFLAGS) thinkCScpp.ps
 
+DEST = /home/downey/public_html/greent/thinkcpp
+
 distrib:
-	rm -rf dist
-	mkdir dist dist/tex dist/html
-	cp thinkCScpp.pdf thinkCScpp.ps dist
-	cp Makefile *.tex *.eps dist/tex
-	cd dist/tex; make clean
-	cd dist; tar -czf thinkCScpp.tex.tar.gz tex
-	cd dist; cp thinkCScpp.tex.tar.gz thinkCScpp.tex.tgz
-	cp -r dist/* /home/downey/public_html/greent/thinkcpp
-	chmod -R o+r /home/downey/public_html/greent/thinkcpp/*
+	rsync thinkCScpp.pdf $(DEST)
 
 clean:
 	rm -f *~ *.aux *.log *.dvi *.idx *.ilg *.ind *.toc

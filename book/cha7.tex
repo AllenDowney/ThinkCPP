@@ -43,14 +43,14 @@ ways:
   string second = "world.";
 \end{verbatim}
 %
-The first line creates an {\tt string} without giving it a value.
+The first line creates a {\tt string} without giving it a value.
 The second line assigns it the string value {\tt "Hello."}
 The third line is a combined declaration and assignment, also
 called an initialization.
 
 Normally when string values like {\tt "Hello, "} or {\tt "world."}
 appear, they are treated as C strings.  In this case, when we assign
-them to an {\tt string} variable, they are converted automatically
+them to a {\tt string} variable, they are converted automatically
 to {\tt string} values.
 
 We can output strings in the usual way:
@@ -184,7 +184,7 @@ indicates (hence the name) which one you want.  The set has to be
 ordered so that each letter has an index and each index
 refers to a single character.
 
-As an exercise, write a function that takes an {\tt string}
+As an exercise, write a function that takes a {\tt string}
 as an argument and that outputs the letters backwards, all on
 one line.
 
@@ -248,7 +248,7 @@ by looking at the type of the argument we provide.
 
 \section{Our own version of {\tt find}}
 
-If we are looking for a letter in an {\tt string}, we may
+If we are looking for a letter in a {\tt string}, we may
 not want to start at the beginning of the string.  One way
 to generalize the {\tt find} function is to write a version
 that takes an additional parameter---the index where we should
@@ -265,7 +265,7 @@ int find (string s, char c, int i)
 }
 \end{verbatim}
 %
-Instead of invoking this function on an {\tt string}, like
+Instead of invoking this function on a {\tt string}, like
 the first version of {\tt find}, we have to pass the {\tt string}
 as the first argument.  The other arguments are the character
 we are looking for and the index where we should start.
@@ -389,11 +389,11 @@ C strings, so you cannot write something like
 \end{verbatim}
 %
 because both operands are C strings.  As long as one of the
-operands is an {\tt string}, though, C++ will automatically
+operands is  {\tt string}, though, C++ will automatically
 convert the other.
 
 It is also possible to concatenate a character onto the
-beginning or end of an {\tt string}.  In the following example, we
+beginning or end of a {\tt string}.  In the following example, we
 will use concatenation and character arithmetic to output
 an abecedarian series.
 
@@ -440,7 +440,7 @@ produces a very strange result, at least in my development environment.
 \index{immutable}
 \index{string}
 
-You can change the letters in an {\tt string} one at a time
+You can change the letters in a {\tt string} one at a time
 using the {\tt []} operator on the left side of an assignment.
 For example,
 
@@ -595,4 +595,3 @@ The decrement operator in C++ is {\tt --}.
 \index{concatenate}
 
 \end{description}
-

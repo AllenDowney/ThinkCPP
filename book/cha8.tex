@@ -143,26 +143,13 @@ The values in squiggly braces get assigned to the instance variables of
 the structure one by one, in order.  So in this case, {\tt x}
 gets the first value and {\tt y} gets the second.
 
-Unfortunately, this syntax can be used only in an initialization,
-not in an assignment statement.  So the following is illegal.
+This syntax can also be used in assignment.  So the following is legal.
 
 \begin{verbatim}
   Point blank;
-  blank = { 3.0, 4.0 };       // WRONG !!
+  blank = { 3.0, 4.0 };
 \end{verbatim}
 %
-You might wonder why this perfectly reasonable statement should
-be illegal; I'm not sure, but I think the problem is that the compiler
-doesn't know what type the right hand side should be.  If you
-add a typecast:
-
-\begin{verbatim}
-  Point blank;
-  blank = (Point){ 3.0, 4.0 };
-\end{verbatim}
-%
-That works.
-
 It is legal to assign one structure to
 another.  For example:
 

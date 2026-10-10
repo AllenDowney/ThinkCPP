@@ -15,8 +15,8 @@ Numbered tasks for tracking work. Each task has a permanent number; add new task
 ### Released
 
 - **v1.1.0** (tag only) — `c743149`, the source matching the PDF built 2019-05-16.
-- **v1.1.1** (2026-10-10, latest) — `c334d3c`: the 2020–2022 contributor typo fixes, plus restoring "one of the operands is a string" (cha7). 191 pages. Same file on greenteapress.com.
-- **Open question:** the copyright page names *CC BY-NC-SA 4.0* but links `creativecommons.org/licenses/by-nc/4.0/` (no ShareAlike). Decide which is intended and make them agree.
+- **v1.1.1** (2026-10-10) — `c334d3c`: the 2020–2022 contributor typo fixes, plus restoring "one of the operands is a string" (cha7). 191 pages. Same file on greenteapress.com.
+- **v1.1.2** (2026-10-10, latest) — the copyright page's license link now matches its text: `creativecommons.org/licenses/by-nc-sa/4.0/` (CC BY-NC-SA 4.0; it linked BY-NC 4.0). Allen's decision. Same file on greenteapress.com.
 
 ### How to release a new version
 

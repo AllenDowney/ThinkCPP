@@ -24,7 +24,6 @@ The pattern (GreenTeaPress `PROJECT_BOARD.md`, Task 7): the GitHub release asset
 
 1. **Bump the version** (`\date {Version X.Y.Z}` in `book/main.tex` (chapters are `book/cha*.tex`, `app*.tex`)) and commit the source changes.
 2. **Build** in a clean copy (not in a working tree with stray files): copy `book/`, then `latex main; makeindex main; latex main; latex main; dvips -Ppdf -o thinkCScpp.ps main; ps2pdf` with the Makefile's `PDFFLAGS` → `thinkCScpp.pdf` (book class, no fancyhdr)
-   **`TEXINPUTS`:** if HeVeA's library (`~/.opam/default/lib/hevea`) is on `TEXINPUTS` before TeX Live's path, its old `lstlang*.sty` can shadow TeX Live's. This book doesn't use `listings`, but keep TeX Live first: `TEXINPUTS=":$HOME/.opam/default/lib/hevea"`.
 3. **Check the build:** no `^!` errors or "Rerun" warnings in the log; same page count unless content changed; compare the text with the previous PDF and read every difference:
    `diff <(pdftotext OLD.pdf - | tr -s ' \n' ' ') <(pdftotext NEW.pdf - | tr -s ' \n' ' ')` (or line-by-line `pdftotext` + `diff`); render any page that looks suspicious (`pdftoppm -f N -l N -r 60 -png`).
    
